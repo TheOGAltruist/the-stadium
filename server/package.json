@@ -2,7 +2,7 @@
   "name": "the-stadium",
   "version": "1.0.0",
   "description": "Capstone Project 2407-PT",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "nodemon server/server.js"
