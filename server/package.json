@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server/server.js",
-    "seed": "node server/prisma/seed.js"
+    "start": "nodemon server/server.js"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +22,6 @@
     "pg": "^8.13.1"
   },
   "prisma": {
-    "seed": "node prisma/seed.js"
+    "seed": "node server/prisma/seed.js"
   }
 }
