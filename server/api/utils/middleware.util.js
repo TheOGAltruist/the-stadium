@@ -22,7 +22,7 @@ const findUserWithToken = async (token) => {
     let issuer;
     
     try {
-        const payload = await jwt.verify(token, process.env.JWT);
+        const payload = await jwt.verify(token, process.env.JWT_SECRET);
         id = payload.id
         issuer = payload.iss
     } catch (err) {
