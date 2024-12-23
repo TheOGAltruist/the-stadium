@@ -43,17 +43,6 @@ const findUserWithToken = async (token) => {
                 username: true,
                 email: true,
                 isAdmin: true,
-                address_street1: true,
-                address_street2: true,
-                address_city: true,
-                address_state: true,
-                address_country: true,
-                address_zipcode: true,
-                reviews: true,
-                payment_methods: true,
-                wishlists: true,
-                cartItems: true,
-                orders: true
             }
         });
 
