@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const routes = require("./routes");
+const routes = require("../server/api/routes");
 
 // Body-parsing middleware
 app.use(express.json());
