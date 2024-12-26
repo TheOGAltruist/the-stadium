@@ -1,11 +1,20 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const authRoutes = require("../server/api/routes/auth.route.js")
 const userRoutes = require("../server/api/routes/user.route.js");
 
 // Body-parsing middleware
 app.use(express.json());
 app.use(require("morgan")("dev"));
+
+// // logger middleware
+// app.use((req, res, next) => {
+//   req.time = new Date(Date.now()).toString();
+//   console.log("INFO: ", req.method, req.hostname, req.path, req.time, req.body);
+//   next();
+// });
+
 
 // connect to port
 const port = process.env.PORT;
@@ -16,6 +25,7 @@ app.listen(port, () => {
 });
 
 // use the imported API routes
+app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes);
 
 // Simple error-handling middleware
