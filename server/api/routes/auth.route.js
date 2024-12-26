@@ -9,6 +9,6 @@ const { isLoggedIn } = require("../utils/middleware.util.js")
 const router = require("express").Router()
 module.exports = router
 
-router.post("/auth/login", login)
-router.post("/auth/register", register)
-router.get("/auth/me", isLoggedIn, me)
+router.post("/login", login)
+router.post("/register", register)
+router.get("/me", isLoggedIn, me)
