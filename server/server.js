@@ -16,7 +16,7 @@ app.listen(port, () => {
 });
 
 // use the imported API routes
-app.use("/api", userRoutes);
+app.use("/api/users", userRoutes);
 
 // Simple error-handling middleware
 app.use((err, req, res, next) => {
