@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const userRoutes = require("../server/api/routes/auth.route.js");
+const userRoutes = require("../server/api/routes/user.route.js");
 
 // Body-parsing middleware
 app.use(express.json());
