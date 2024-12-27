@@ -22,7 +22,22 @@ const getAllUsers = async (req, res, next) => {
 }
 
 //Get single user (Admin only)
+const getSpecificUser = async (req, res, next) => {
+    try {
+        const response = await prisma.user.findUniqueOrThrow({
+            where: {
+                id: req.params.userId
+            }
+        });
+
+        const {password, ...rest} = response;
+        res.status(200).json(rest)
+    } catch (error) {
+        next(error)
+    }
+}
 
 module.exports = {
     getAllUsers,
+    getSpecificUser,
 }
