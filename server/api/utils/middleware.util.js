@@ -16,6 +16,28 @@ const isLoggedIn = async (req, res, next) => {
     }
 }
 
+//Middleware function for admin-only routes
+const isAdmin = async (req, res, next) => {
+    try {
+        const receivedToken = (req.headers.authorization).split(" ")[1]
+        req.user = await findUserWithToken(receivedToken);
+
+        if (req.user.isAdmin === true) {
+            next();
+        } else {
+            next({
+                statusCode: 401,
+                message: "Insufficient permissions to perform this action."
+            })
+        }
+    } catch (error) {
+        next({
+            statusCode: 401,
+            message: "Unauthorized"
+        })
+    }
+}
+
 //Find user using token
 const findUserWithToken = async (token) => {
     let id;
@@ -60,5 +82,6 @@ const findUserWithToken = async (token) => {
 
 module.exports = {
     isLoggedIn,
-    findUserWithToken
+    findUserWithToken,
+    isAdmin
 }
