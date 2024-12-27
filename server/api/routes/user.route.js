@@ -2,9 +2,9 @@ const {
     getAllUsers,
 } = require("../controllers/user.controller.js")
 
-const { isLoggedIn } = require("../utils/middleware.util.js")
+const { isLoggedIn, isAdmin } = require("../utils/middleware.util.js")
 
 const router = require("express").Router()
 module.exports = router
 
-router.get("/", isLoggedIn, getAllUsers)
+router.get("/", isLoggedIn, isAdmin, getAllUsers)
