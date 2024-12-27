@@ -1,8 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const authRoutes = require("../server/api/routes/auth.route.js")
+const authRoutes = require("../server/api/routes/auth.route.js");
 const userRoutes = require("../server/api/routes/user.route.js");
+const meRoutes = require("../server/api/routes/me.route.js")
 
 // Body-parsing middleware
 app.use(express.json());
@@ -25,8 +26,9 @@ app.listen(port, () => {
 });
 
 // use the imported API routes
-app.use("/api/auth", authRoutes)
+app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/me", meRoutes);
 
 // Simple error-handling middleware
 app.use((err, req, res, next) => {
