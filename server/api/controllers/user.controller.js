@@ -1,13 +1,7 @@
 const prisma = require("../../prisma/index.js")
 
+//Get all users (Admin only)
 const getAllUsers = async (req, res, next) => {
-
-    if(req.user.isAdmin === false) { 
-        next({
-            statusCode: 401,
-            message: "Insufficient permissions to perform this action."
-        }) 
-    }
 
     try{
         const response = await prisma.user.findMany({
@@ -20,12 +14,14 @@ const getAllUsers = async (req, res, next) => {
                 isAdmin: true,
             }
         })
-        
+
         res.status(200).json(response)
     } catch (error){
         next(error)
     }
 }
+
+//Get single user (Admin only)
 
 module.exports = {
     getAllUsers,
