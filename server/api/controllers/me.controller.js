@@ -9,7 +9,7 @@ const getMe = async (req, res, next) => {
             }
         });
 
-        const {id, password, ...rest} = me;
+        const {id, password, isAdmin, ...rest} = me;
 
         res.json(rest)
     } catch (error) {
@@ -21,6 +21,13 @@ const getMe = async (req, res, next) => {
 const editMe = async (req, res, next) => {
 
     const { firstname, lastname, password, email, address_street1, address_street2, address_city, address_state, address_country, address_zipcode } = req.body
+
+    if(req.body.hasOwnProperty("isAdmin")){
+        next({
+            statusCode: 401,
+            message: "Insufficient permissions to perform this action."
+        })
+    }
 
     try {
         const existingAttributes = await prisma.user.findUnique({
