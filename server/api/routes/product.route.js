@@ -1,17 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const prisma = require("../../prisma/index");
+const { getAllProducts } = require("../controllers/product.controller");
 const { isAdmin } = require("../utils/middleware.util");
 
 // **READ** Get all products
-router.get("/", async (req, res) => {
-  try {
-    const products = await prisma.product.findMany();
-    res.status(200).json(products);
-  } catch (error) {
-    console.error("Failed to fetch products", error);
-  }
-});
+router.get("/", getAllProducts);
 
 // Get product by ID
 router.get("/:id", async (req, res) => {
