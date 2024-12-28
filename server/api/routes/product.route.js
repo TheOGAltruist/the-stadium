@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getAllProducts,
   getProductById,
+  createProduct,
 } = require("../controllers/product.controller");
 const { isAdmin } = require("../utils/middleware.util");
 
@@ -13,26 +14,7 @@ router.get("/", getAllProducts);
 router.get("/:id", getProductById);
 
 // **CREATE** a new product (ADMIN ONLY)
-router.post("/", isAdmin, async (req, res) => {
-  const { name, description, price, quantity, tags, categories } = req.body;
-  try {
-    const newProduct = await prisma.product.create({
-      data: {
-        name,
-        description,
-        price,
-        quantity,
-        tags: { create: tags.map((tag) => ({ name: tag })) },
-        categories: {
-          create: categories.map((category) => ({ name: category })),
-        },
-      },
-    });
-    res.status(201).json(newProduct);
-  } catch (error) {
-    console.error("Failed to create product", error);
-  }
-});
+router.post("/", isAdmin, createProduct);
 
 //   **UPDATE** a product (ADMIN ONLY)
 router.put("/:id", isAdmin, async (req, res) => {
