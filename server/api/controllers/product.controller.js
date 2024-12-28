@@ -23,9 +23,29 @@ const getProductById = async (req, res) => {
 };
 
 // Create a new product (ADMIN ONLY)
+const createProduct = async (req, res) => {
+  const { name, description, price, quantity, tags, categories } = req.body;
+  try {
+    const newProduct = await prisma.product.create({
+      data: {
+        name,
+        description,
+        price,
+        quantity,
+        tags: { create: tags.map((tag) => ({ name: tag })) },
+        categories: {
+          create: categories.map((category) => ({ name: category })),
+        },
+      },
+    });
+    res.status(201).json(newProduct);
+  } catch (error) {
+    console.error("Failed to create product", error);
+  }
+};
 
 // Update a product (ADMIN ONLY)
 
 // DELETE a product (ADMIN only)
 
-module.exports = { getAllProducts, getProductById };
+module.exports = { getAllProducts, getProductById, createProduct };
