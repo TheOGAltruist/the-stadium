@@ -1,22 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const { getAllProducts } = require("../controllers/product.controller");
+const {
+  getAllProducts,
+  getProductById,
+} = require("../controllers/product.controller");
 const { isAdmin } = require("../utils/middleware.util");
 
 // **READ** Get all products
 router.get("/", getAllProducts);
 
 // Get product by ID
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const product = await prisma.product.findUnique({ where: { id } });
-    if (!product) return res.status(404).json({ error: "Product not found" });
-    res.status(200).json(product);
-  } catch (error) {
-    console.error("Failed to fetch product", error);
-  }
-});
+router.get("/:id", getProductById);
 
 // **CREATE** a new product (ADMIN ONLY)
 router.post("/", isAdmin, async (req, res) => {
