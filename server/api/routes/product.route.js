@@ -24,3 +24,25 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// **CREATE** a new product (ADMIN ONLY)
+router.post("/", async (req, res) => {
+  const { name, description, price, quantity, tags, categories } = req.body;
+  try {
+    const newProduct = await prisma.product.create({
+      data: {
+        name,
+        description,
+        price,
+        quantity,
+        tags: { create: tags.map((tag) => ({ name: tag })) },
+        categories: {
+          create: categories.map((category) => ({ name: category })),
+        },
+      },
+    });
+    res.status(201).json(newProduct);
+  } catch (error) {
+    console.error("Failed to create product", error);
+  }
+});
+
