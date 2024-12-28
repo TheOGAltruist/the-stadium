@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const prisma = require("../../prisma/index");
+const { isAdmin } = require("../utils/middleware.util");
 
 // **READ** Get all products
 router.get("/", async (req, res) => {
@@ -25,7 +26,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // **CREATE** a new product (ADMIN ONLY)
-router.post("/", async (req, res) => {
+router.post("/", isAdmin, async (req, res) => {
   const { name, description, price, quantity, tags, categories } = req.body;
   try {
     const newProduct = await prisma.product.create({
@@ -47,7 +48,7 @@ router.post("/", async (req, res) => {
 });
 
 //   **UPDATE** a product (ADMIN ONLY)
-router.put("/:id", async (req, res) => {
+router.put("/:id", isAdmin, async (req, res) => {
   const { id } = req.params;
   const { name, description, price, quantity, tags, categories } = req.body;
   try {
@@ -70,7 +71,8 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+// **DELETE** a product (admin only)
+router.delete("/:id", isAdmin, async (req, res) => {
   const { id } = req.params;
   try {
     await prisma.product.delete({ where: { id } });
@@ -80,3 +82,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+module.exports = router;
