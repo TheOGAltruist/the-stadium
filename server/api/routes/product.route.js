@@ -46,3 +46,37 @@ router.post("/", async (req, res) => {
   }
 });
 
+//   **UPDATE** a product (ADMIN ONLY)
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name, description, price, quantity, tags, categories } = req.body;
+  try {
+    const product = await prisma.product.update({
+      where: { id },
+      data: {
+        name,
+        description,
+        price,
+        quantity,
+        tags: { set: tags?.map((tag) => ({ name: tag })) },
+        categories: {
+          set: categories?.map((category) => ({ name: category })),
+        },
+      },
+    });
+    res.status(200).json(product);
+  } catch (error) {
+    console.error("Failed to update product", error);
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.product.delete({ where: { id } });
+    res.status(204).send();
+  } catch (error) {
+    console.error("Failed to delete product", error);
+  }
+});
+
