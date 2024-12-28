@@ -4,6 +4,7 @@ const app = express();
 const authRoutes = require("../server/api/routes/auth.route.js");
 const userRoutes = require("../server/api/routes/user.route.js");
 const meRoutes = require("../server/api/routes/me.route.js")
+const productRoutes = require('../server/api/routes/product.route.js');
 
 // Body-parsing middleware
 app.use(express.json());
@@ -29,6 +30,7 @@ app.listen(port, () => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/me", meRoutes);
+app.use('/api/products', productRoutes);
 
 // Simple error-handling middleware
 app.use((err, req, res, next) => {
