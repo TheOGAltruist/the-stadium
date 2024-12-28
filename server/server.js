@@ -1,11 +1,21 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const routes = require("./routes");
+const authRoutes = require("../server/api/routes/auth.route.js");
+const userRoutes = require("../server/api/routes/user.route.js");
+const meRoutes = require("../server/api/routes/me.route.js")
 
 // Body-parsing middleware
 app.use(express.json());
 app.use(require("morgan")("dev"));
+
+// // logger middleware
+// app.use((req, res, next) => {
+//   req.time = new Date(Date.now()).toString();
+//   console.log("INFO: ", req.method, req.hostname, req.path, req.time, req.body);
+//   next();
+// });
+
 
 // connect to port
 const port = process.env.PORT;
@@ -16,12 +26,13 @@ app.listen(port, () => {
 });
 
 // use the imported API routes
-app.use("/api", routes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/me", meRoutes);
 
 // Simple error-handling middleware
 app.use((err, req, res, next) => {
-  console.error(err);
-  const status = err.status ?? 500;
+  const statusCode = err.statusCode ?? 500;
   const message = err.message ?? "Internal Server Error";
-  res.status(status).json({ message });
+  res.status(statusCode).json({ message });
 });
