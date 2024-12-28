@@ -12,3 +12,15 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Get product by ID
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await prisma.product.findUnique({ where: { id } });
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    res.status(200).json(product);
+  } catch (error) {
+    console.error("Failed to fetch product", error);
+  }
+});
+
