@@ -24,6 +24,6 @@
     "pg": "^8.13.1"
   },
   "prisma": {
-    "seed": "node server/prisma/seed.js"
+    "seed": "node prisma/seed.js"
   }
 }
