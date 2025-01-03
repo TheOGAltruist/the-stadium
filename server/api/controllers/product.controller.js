@@ -6,12 +6,12 @@ const getAllProducts = async (req, res, next) => {
     const products = await prisma.product.findMany();
     res.status(200).json(products);
   } catch (error) {
-    next("Failed to fetch products", error);
+    next(error);
   }
 };
 
 // Get product by ID
-const getProductById = async (req, res) => {
+const getProductById = async (req, res, next) => {
   const { id } = req.params;
   try {
     const product = await prisma.product.findUnique({ where: { id } });
@@ -23,7 +23,7 @@ const getProductById = async (req, res) => {
 };
 
 // Create a new product (ADMIN ONLY)
-const createProduct = async (req, res) => {
+const createProduct = async (req, res, next) => {
   const { name, description, price, quantity, tags, categories } = req.body;
   try {
     const newProduct = await prisma.product.create({
@@ -45,7 +45,7 @@ const createProduct = async (req, res) => {
 };
 
 // Update a product (ADMIN ONLY)
-const updateProduct = async (req, res) => {
+const updateProduct = async (req, res, next) => {
   const { id } = req.params;
   const { name, description, price, quantity, tags, categories } = req.body;
   try {
@@ -69,7 +69,7 @@ const updateProduct = async (req, res) => {
 };
 
 // DELETE a product (ADMIN only)
-const deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res, next) => {
   const { id } = req.params;
   try {
     await prisma.product.delete({ where: { id } });
