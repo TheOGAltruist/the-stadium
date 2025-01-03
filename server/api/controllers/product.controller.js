@@ -30,7 +30,7 @@ const createProduct = async (req, res, next) => {
       data: {
         name,
         description,
-        price,
+        price: parseFloat(price.toFixed(2)),
         quantity,
         skuId,
       },
@@ -55,7 +55,7 @@ const updateProduct = async (req, res, next) => {
       data: {
         name,
         description,
-        price,
+        price: parseFloat(price.toFixed(2)),
         quantity,
         skuId,
       },

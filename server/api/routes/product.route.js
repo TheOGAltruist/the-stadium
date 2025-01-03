@@ -19,7 +19,7 @@ router.get("/:id", getProductById);
 router.post("/", isAdmin, createProduct);
 
 // **UPDATE** a product (ADMIN ONLY)
-router.patch("/:id", isAdmin, updateProduct);
+router.put("/:id", isAdmin, updateProduct);
 
 // **DELETE** a product (admin only)
 router.delete("/:id", isAdmin, deleteProduct);
