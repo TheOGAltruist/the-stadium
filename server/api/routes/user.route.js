@@ -4,7 +4,7 @@ const {
     modifySpecificUser,
 } = require("../controllers/user.controller.js")
 
-const { isLoggedIn, isAdmin } = require("../utils/middleware.util.js")
+const { isLoggedIn, isAdmin } = require("../middleware/middleware.util.js")
 
 const router = require("express").Router()
 module.exports = router

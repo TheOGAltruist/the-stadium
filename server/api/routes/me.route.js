@@ -3,7 +3,7 @@ const {
     editMe,
 } = require("../controllers/me.controller.js")
 
-const { isLoggedIn } = require("../utils/middleware.util.js")
+const { isLoggedIn } = require("../middleware/middleware.util.js")
 
 const router = require("express").Router()
 module.exports = router
