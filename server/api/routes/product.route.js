@@ -7,7 +7,7 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../controllers/product.controller");
-const { isAdmin } = require("../utils/middleware.util");
+const { isAdmin } = require("../middleware/middleware.util");
 
 // **READ** Get all products
 router.get("/", getAllProducts);
