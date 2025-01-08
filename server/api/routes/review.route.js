@@ -13,6 +13,6 @@ router.post("/:productId", isLoggedIn, addReview);
 router.put('/:productId', isLoggedIn, updateReview);
 
 // Delete a review
-router.delete(':id', isLoggedIn, deleteReview);
+router.delete('/:reviewId', isLoggedIn, deleteReview);
 
 module.exports = router;

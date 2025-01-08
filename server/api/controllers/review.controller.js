@@ -78,12 +78,12 @@ const updateReview = async (req, res, next) => {
 
 // DELETE a review (USERS or ADMIN only)
 const deleteReview = async (req, res, next) => {
-  const { id } = req.params;
+  const { reviewId } = req.params;
   const { username } = req.user;
 
   try {
-    const existingReview = prisma.review.findUnique({
-      where: { id },
+    const existingReview = await prisma.review.findUnique({
+      where: { id: reviewId },
     });
 
     if (!existingReview) {
@@ -101,7 +101,7 @@ const deleteReview = async (req, res, next) => {
       });
     }
 
-    await prisma.review.delete({ where: { id } });
+    await prisma.review.delete({ where: { id: reviewId } });
     res.status(204).send();
   } catch (error) {
     next({ message: "Failed to delete review" });
