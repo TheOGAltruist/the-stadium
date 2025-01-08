@@ -17,11 +17,11 @@ const getReviews = async (req, res, next) => {
 // ADD a review for a product (USERS ONLY)
 const addReview = async (req, res, next) => {
   const { productId } = req.params;
-  const { id: userId } = req.user;
+  const { username } = req.user;
   const { text, rating } = req.body;
   try {
     const newReview = await prisma.review.create({
-      data: { product_id: productId, user_name: userId, text, rating },
+      data: { product_id: productId, user_name: username, text, rating },
     });
     res.status(201).json(newReview);
   } catch (error) {
@@ -31,13 +31,22 @@ const addReview = async (req, res, next) => {
 
 // UPDATE a review for a product (USERS ONLY)
 const updateReview = async (req, res, next) => {
-  const { id } = req.params;
-  const { id: userId } = req.user;
+  const { productId } = req.params;
+  const { username } = req.user;
   const { text, rating } = req.body;
+
+  console.log(req.params);
+  console.log(req.user);
+  console.log(req.body);
 
   try {
     const existingReview = await prisma.review.findUnique({
-      where: { id },
+      where: {
+        user_name_product_id: {
+          user_name: username,
+          product_id: productId,
+        },
+      },
     });
 
     if (!existingReview) {
@@ -45,7 +54,7 @@ const updateReview = async (req, res, next) => {
     }
 
     // Only users are able to update the review
-    if (existingReview.user_id !== userId) {
+    if (existingReview.user_name !== username) {
       return next({
         statusCode: 403,
         message: "You are not authorized to update this review",
@@ -53,7 +62,12 @@ const updateReview = async (req, res, next) => {
     }
 
     const updatedReview = await prisma.review.update({
-      where: { id },
+      where: {
+        user_name_product_id: {
+          user_name: username,
+          product_id: productId,
+        },
+      },
       data: { text, rating },
     });
     res.status(200).json(updatedReview);
@@ -65,7 +79,7 @@ const updateReview = async (req, res, next) => {
 // DELETE a review (USERS or ADMIN only)
 const deleteReview = async (req, res, next) => {
   const { id } = req.params;
-  const { id: userId, isAdmin } = req.user;
+  const { username } = req.user;
 
   try {
     const existingReview = prisma.review.findUnique({
@@ -80,7 +94,7 @@ const deleteReview = async (req, res, next) => {
     }
 
     // only USERS and ADMIN can delete a review
-    if (existingReview.user_id !== userId && !isAdmin) {
+    if (existingReview.user_name !== username) {
       return next({
         statusCode: 403,
         message: "You are not authorized to delete this review",
