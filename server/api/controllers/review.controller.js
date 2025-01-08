@@ -17,7 +17,7 @@ const getReviews = async (req, res, next) => {
 // ADD a review for a product (USERS ONLY)
 const addReview = async (req, res, next) => {
   const { productId } = req.params;
-  const { userId } = req.user;
+  const { id: userId } = req.user;
   const { text, rating } = req.body;
   try {
     const newReview = await prisma.review.create({
@@ -28,5 +28,7 @@ const addReview = async (req, res, next) => {
     next({ message: "Failed to add review" });
   }
 };
+
+// UPDATE a review for a product ()
 
 module.exports = { getReviews, addReview };
