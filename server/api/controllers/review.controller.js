@@ -31,7 +31,7 @@ const addReview = async (req, res, next) => {
 
 // UPDATE a review for a product (USERS ONLY)
 const updateReview = async (req, res, next) => {
-  const { productId } = req.params;
+  const { id } = req.params;
   const { id: userId } = req.user;
   const { text, rating } = req.body;
 
@@ -62,4 +62,36 @@ const updateReview = async (req, res, next) => {
   }
 };
 
-module.exports = { getReviews, addReview, updateReview };
+// DELETE a review (USERS or ADMIN only)
+const deleteReview = async (req, res, next) => {
+  const { id } = req.params;
+  const { id: userId, isAdmin } = req.user;
+
+  try {
+    const existingReview = prisma.review.findUnique({
+      where: { id },
+    });
+
+    if (!existingReview) {
+      return next({
+        statusCode: 404,
+        message: "Review not found",
+      });
+    }
+
+    // only USERS and ADMIN can delete a review
+    if (existingReview.user_id !== userId && !isAdmin) {
+      return next({
+        statusCode: 403,
+        message: "You are not authorized to delete this review",
+      });
+    }
+
+    await prisma.review.delete({ where: { id } });
+    res.status(204).send();
+  } catch (error) {
+    next({ message: "Failed to delete review" });
+  }
+};
+
+module.exports = { getReviews, addReview, updateReview, deleteReview };
