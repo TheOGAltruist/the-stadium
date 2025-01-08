@@ -29,6 +29,37 @@ const addReview = async (req, res, next) => {
   }
 };
 
-// UPDATE a review for a product ()
+// UPDATE a review for a product (USERS ONLY)
+const updateReview = async (req, res, next) => {
+  const { productId } = req.params;
+  const { id: userId } = req.user;
+  const { text, rating } = req.body;
 
-module.exports = { getReviews, addReview };
+  try {
+    const existingReview = await prisma.review.findUnique({
+      where: { id },
+    });
+
+    if (!existingReview) {
+      return next({ statusCode: 404, message: "Review not found" });
+    }
+
+    // Only users are able to update the review
+    if (existingReview.user_id !== userId) {
+      return next({
+        statusCode: 403,
+        message: "You are not authorized to update this review",
+      });
+    }
+
+    const updatedReview = await prisma.review.update({
+      where: { id },
+      data: { text, rating },
+    });
+    res.status(200).json(updatedReview);
+  } catch (error) {
+    next({ message: "Failed to update review" });
+  }
+};
+
+module.exports = { getReviews, addReview, updateReview };
