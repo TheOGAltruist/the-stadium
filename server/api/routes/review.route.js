@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { getReviews } = require("../controllers/review.controller");
+const { getReviews, addReview } = require("../controllers/review.controller");
 
 // GET reviews for a product
 router.get("/:productId", getReviews);
 
 // Add a review for a product
+router.post("/:productId", addReview);
 
 // Update a review
 
