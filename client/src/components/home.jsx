@@ -91,7 +91,7 @@ const Home = () => {
     .sort((a, b) => (sortBy === "low" ? a.price - b.price : b.price - a.price));
 
   return (
-    <Box sx={{ pt: { xs: "15rem", md: "0rem" } }}>
+    <Box sx={{ pt: { xs: "15rem", md: "5rem" } }}>
       <Typography variant="h4" gutterBottom>
         Welcome to The Stadium
       </Typography>

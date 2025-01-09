@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import Login from "./Login";
 import Register from "./Register";
+import UserHome from "./UserHome";
 
 const UserAccount = () => {
   const [showLogin, setShowLogin] = useState(true);
 
   return (
-    <Box sx={{ pt: { xs: "200px", md: "4rem" } }}>
+    <Box sx={{ pt: { xs: "15rem", md: "5rem" } }}>
       <Typography variant="h4" textAlign="center" gutterBottom>
         Account
       </Typography>
