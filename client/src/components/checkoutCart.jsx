@@ -39,13 +39,7 @@ const CheckoutCart = () => {
     cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
-    <Box
-      sx={{
-        pt: { xs: "200px", md: "4rem" },
-        maxWidth: "800px",
-        margin: "0 auto",
-      }}
-    >
+    <Box sx={{ pt: { xs: "15rem", md: "5rem" } }}>
       <Typography variant="h4" textAlign="center" gutterBottom>
         <ShoppingCartIcon fontSize="large" /> Checkout Cart
       </Typography>

@@ -2,18 +2,12 @@ import { Box, Typography, Grid, Card, CardContent } from "@mui/material";
 
 export default function About() {
   return (
-    <Box
-      sx={{
-        pt: { xs: "200px", md: "4rem" },
-        maxWidth: "1200px",
-        margin: "0 auto",
-      }}
-    >
+    <Box sx={{ pt: { xs: "15rem", md: "5rem" } }}>
       <Typography variant="h3" gutterBottom textAlign="center" color="primary">
         About The Stadium
       </Typography>
 
-      <Box sx={{ marginBottom: "30px" }}>
+      <Box sx={{ marginBottom: "30px" }} align="center">
         <Typography variant="h5" gutterBottom>
           Our Mission
         </Typography>
@@ -27,7 +21,7 @@ export default function About() {
         </Typography>
       </Box>
 
-      <Box sx={{ marginBottom: "30px" }}>
+      <Box sx={{ marginBottom: "30px" }} align="center">
         <Typography variant="h5" gutterBottom>
           Our Story
         </Typography>
@@ -42,7 +36,7 @@ export default function About() {
         </Typography>
       </Box>
 
-      <Box sx={{ marginBottom: "30px" }}>
+      <Box sx={{ marginBottom: "30px" }} align="center">
         <Typography variant="h5" gutterBottom>
           Why Choose The Stadium?
         </Typography>
@@ -92,7 +86,7 @@ export default function About() {
         </Grid>
       </Box>
 
-      <Box>
+      <Box align="center">
         <Typography variant="h5" gutterBottom>
           Join the Community at The Stadium
         </Typography>
