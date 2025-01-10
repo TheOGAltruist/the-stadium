@@ -25,8 +25,10 @@ const login = async (req, res, next) => {
                 message: "Unauthorized. Incorrect username or password. Try again!"
             })
         } else {
-            const token = await jwt.sign({ id: response.id, username: response.username, iss: "the_stadium" }, process.env.JWT_SECRET, { expiresIn: '1h' })
+            const token = await jwt.sign({ id: response.id, username: response.username, iss: "the_stadium" }, process.env.JWT_SECRET, { expiresIn: '1h', notBefore: 0 })
+            const {id, password, isAdmin, ...rest} = response;
             res.json({
+                user: rest,
                 token: token,
                 token_type: "Bearer"
             })
@@ -45,45 +47,29 @@ const register = async (req, res, next) => {
         const response = await prisma.user.create({
             data: {
                 firstname: req.body.firstname,
+                lastname: req.body.lastname,
                 username: req.body.username,
                 password: await bcrypt.hash(req.body.password, Math.floor(Math.random() * 10) + 1),
                 email: req.body.email
             }
         })
         
-        const token = await jwt.sign({ id: response.id, username: response.username, iss: "the_stadium" }, process.env.JWT_SECRET, { expiresIn: '1h' })
+        const token = await jwt.sign({ id: response.id, username: response.username, iss: "the_stadium" }, process.env.JWT_SECRET, { expiresIn: '1h', notBefore: 0 })
+        const {id, password, isAdmin, ...rest} = response;
         res.json({
-            Id: response.id,
+            user: rest,
             token: token,
             token_type: "Bearer"
         })
     } catch (error) {
         next({
             statusCode: 409,
-            message: "Username is not unique. Please choose another username and try again!"
+            message: "Username or Email Address is not unique. Please try again!"
         })
-    }
-}
-
-//Return me object
-const me = async (req, res, next) => {
-    try {
-        const me = await prisma.user.findUniqueOrThrow({
-            where: {
-                id: req.user.id
-            }
-        });
-
-        const {password, ...rest} = me;
-
-        res.json(rest)
-    } catch (error) {
-        next(error)
     }
 }
 
 module.exports = {
     login,
     register,
-    me,
 }
