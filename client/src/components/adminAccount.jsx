@@ -2,7 +2,7 @@ import { Box, Typography, Button } from "@mui/material";
 
 const AdminAccount = () => {
   return (
-    <Box p={4}>
+    <Box sx={{ pt: { xs: "15rem", md: "5rem" } }} align="center">
       <Typography variant="h4" gutterBottom>
         Admin Dashboard
       </Typography>
