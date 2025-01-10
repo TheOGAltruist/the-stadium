@@ -26,7 +26,7 @@ const isAdmin = async (req, res, next) => {
       next();
     } else {
       next({
-        statusCode: 401,
+        statusCode: 403,
         message: "Insufficient permissions to perform this action.",
       });
     }
@@ -80,8 +80,60 @@ const findUserWithToken = async (token) => {
   }
 };
 
+//Wishlist permissions
+const wishlistPermission = async (req, res,next) => {
+  try {
+    const owner = await prisma.wishlist.findUnique({
+        where: {
+            id: req.params.wishlistId,
+            user_id: req.user.id
+        }
+    })
+    
+    if(!owner){
+        try {
+            const sharedWith = await prisma.wishlist.findUniqueOrThrow({
+                where: {
+                    id: req.params.wishlistId
+                }
+            });
+            console.log(req.user)
+            if(sharedWith.sharedWith === null){
+              next({
+                statusCode: 403,
+                message: "Forbidden. Insufficient Access. Please ask wishlist owner to share the list."
+              })
+            } else if(!(req.user.email in sharedWith.sharedWith)){
+              next({
+                statusCode: 403,
+                message: "Forbidden. Insufficient Access. Please ask wishlist owner to share the list."
+              })
+            } else{
+                req.permission = sharedWith.sharedWith[req.user.email]
+            }
+
+            next();
+        } catch (error) {
+            console.log(error)
+            next({
+                statusCode: 404,
+                message: error.meta?.cause
+            })
+        }
+    } else{
+        req.permission = "Owner"
+        next();
+    }
+
+
+} catch (error) {
+    next(error)
+}
+}
+
 module.exports = {
   isLoggedIn,
   findUserWithToken,
   isAdmin,
+  wishlistPermission,
 };
