@@ -14,4 +14,23 @@ const getComments = async (req, res, next) => {
   }
 };
 
-module.exports = { getComments };
+// ADD comments to a review
+const addComment = async (req, res, next) => {
+  const { reviewId } = req.params;
+  const { userId } = req.user;
+  const { text } = req.body;
+  try {
+    const newComment = await prisma.comment.create({
+      data: {
+        review_id: reviewId,
+        user_name: userId,
+        text,
+      },
+    });
+    res.status(201).json(newComment);
+  } catch (error) {
+    next({ message: "Failed to add a comment" });
+  }
+};
+
+module.exports = { getComments, addComment };

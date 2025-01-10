@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { getComments } = require("../controllers/comment.controller");
+const { getComments, addComment } = require("../controllers/comment.controller");
 const { isLoggedIn } = require("../middleware/middleware.util");
 
 // GET comments for a product review
 router.get("/:reviewId", getComments);
 
 // Add a comment to a product review (USERS only)
+router.post('/:reviewId', isLoggedIn, addComment);
 
 // Update a comment to a product review (USERS only)
 
