@@ -9,7 +9,11 @@ import {
 } from "@mui/material";
 import { useLoginUserMutation } from "../redux/api/apiSlice";
 import { useNavigate } from "react-router-dom";
-import { loginSuccess } from "../redux/auth/authSlice";
+import {
+  loginFailure,
+  loginStart,
+  loginSuccess,
+} from "../redux/auth/authSlice";
 import { useDispatch } from "react-redux";
 
 const Login = () => {
@@ -24,6 +28,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    dispatch(loginStart());
 
     // Regex to check if input is an email, if false it is treated as a username
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginInput);
@@ -55,7 +60,7 @@ const Login = () => {
         navigate("/");
       }
     } catch (error) {
-      console.error("Login failed", error);
+      dispatch(loginFailure(error.message || "Failed to login"));
     }
   };
 
