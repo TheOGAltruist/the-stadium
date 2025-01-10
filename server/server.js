@@ -6,6 +6,7 @@ const userRoutes = require("../server/api/routes/user.route.js");
 const meRoutes = require("../server/api/routes/me.route.js")
 const productRoutes = require('../server/api/routes/product.route.js');
 const reviewRoutes = require('../server/api/routes/review.route.js');
+const commentRoutes = require('../server/api/routes/comment.route.js');
 
 // Body-parsing middleware
 app.use(express.json());
@@ -33,6 +34,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/me", meRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/comments', commentRoutes);
 
 // Simple error-handling middleware
 app.use((err, req, res, next) => {
