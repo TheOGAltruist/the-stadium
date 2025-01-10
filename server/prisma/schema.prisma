@@ -40,9 +40,9 @@ model Product {
   id String @id @default(uuid(4))
   name String
   description String
-  price Decimal
+  price Decimal @db.Decimal(10,2)
   quantity Int
-  skuId String
+  skuId String @unique
   tags Tag[]
   categories Category[]
   reviews Review[]
@@ -58,6 +58,7 @@ model Category {
   name String
   product Product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   product_id String
+  @@unique([name, product_id])
 }
 
 model Tag {
@@ -65,6 +66,7 @@ model Tag {
   name String
   product Product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   product_id String
+  @@unique([name, product_id])
 }
 
 model Review {
