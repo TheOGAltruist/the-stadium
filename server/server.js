@@ -1,12 +1,12 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const authRoutes = require("../server/api/routes/auth.route.js");
 const userRoutes = require("../server/api/routes/user.route.js");
 const meRoutes = require("../server/api/routes/me.route.js")
 const productRoutes = require('../server/api/routes/product.route.js');
 const reviewRoutes = require('../server/api/routes/review.route.js');
-const commentRoutes = require('../server/api/routes/comment.route.js');
 
 // Body-parsing middleware
 app.use(express.json());
@@ -19,6 +19,12 @@ app.use(require("morgan")("dev"));
 //   next();
 // });
 
+// CORS middleware
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow requests from this origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
+  credentials: true // Allow credentials if needed
+}));
 
 // connect to port
 const port = process.env.PORT;
@@ -34,7 +40,6 @@ app.use("/api/users", userRoutes);
 app.use("/api/me", meRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/reviews', reviewRoutes);
-app.use('/api/comments', commentRoutes);
 
 // Simple error-handling middleware
 app.use((err, req, res, next) => {
