@@ -9,44 +9,50 @@ const seed = async () => {
         {
           name: faker.commerce.product(),
           description: faker.commerce.productDescription(),
-          price: 5.12,
+          price: faker.commerce.price(),
           quantity: 10,
-          skuId: faker.commerce.isbn(8)
+          skuId: faker.commerce.isbn(8),
+          image: faker.image.url()
         },
         {
           name: faker.commerce.product(),
           description: faker.commerce.productDescription(),
-          price: 5.00,
+          price: faker.commerce.price(),
           quantity: 10,
-          skuId: faker.commerce.isbn(8)
+          skuId: faker.commerce.isbn(8),
+          image: faker.image.url()
         },
         {
           name: faker.commerce.product(),
           description: faker.commerce.productDescription(),
-          price: 5.00,
+          price: faker.commerce.price(),
           quantity: 10,
-          skuId: faker.commerce.isbn(8)
+          skuId: faker.commerce.isbn(8),
+          image: faker.image.url()
         },
         {
           name: faker.commerce.product(),
           description: faker.commerce.productDescription(),
-          price: 5.00,
+          price: faker.commerce.price(),
           quantity: 10,
-          skuId: faker.commerce.isbn(8)
+          skuId: faker.commerce.isbn(8),
+          image: faker.image.url()
         },
         {
           name: faker.commerce.product(),
           description: faker.commerce.productDescription(),
-          price: 5.00,
+          price: faker.commerce.price(),
           quantity: 10,
-          skuId: faker.commerce.isbn(8)
+          skuId: faker.commerce.isbn(8),
+          image: faker.image.url()
         },
         {
           name: faker.commerce.product(),
           description: faker.commerce.productDescription(),
-          price: 5.00,
+          price: faker.commerce.price(),
           quantity: 10,
-          skuId: faker.commerce.isbn(8)
+          skuId: faker.commerce.isbn(8),
+          image: faker.image.url()
         }
     ],
     select: {
