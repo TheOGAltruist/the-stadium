@@ -1,6 +1,5 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Box } from "@mui/material";
 
 import Home from "./components/Home.jsx";
 import About from "./components/About.jsx";
@@ -9,6 +8,8 @@ import Navbar from "./components/Navbar.jsx";
 import UserAccount from "./components/UserAccount.jsx";
 import AdminAccount from "./components/AdminAccount.jsx";
 import UserHome from "./components/UserHome.jsx";
+import UserOrderHistory from "./components/UserOrderHistory.jsx";
+import Wishlist from "./components/Wishlist.jsx";
 
 function App() {
   return (
@@ -24,6 +25,8 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/admin" element={<AdminAccount />} />
           <Route path="/userhome" element={<UserHome />} />
+          <Route path="/orderhistory" element={<UserOrderHistory />} />
+          <Route path="/wishlist" element={<Wishlist />} />
         </Routes>
       </div>
     </BrowserRouter>
