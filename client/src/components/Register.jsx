@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   TextField,
@@ -7,65 +7,12 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import { useRegisterUserMutation } from "../redux/auth/authApi";
-import {
-  registerStart,
-  registerSuccess,
-  registerFailure,
-} from "../redux/auth/authSlice";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [registerUser, { isLoading, isError, error }] =
-    useRegisterUserMutation();
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    username: "",
-    email: "",
-    password: "",
-  });
-  const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
-    //Dispatch registerStart action from authSlice
-    dispatch(registerStart());
-    console.log(formData);
-
     // Add API call logic here
-    try {
-      const result = await registerUser(formData).unwrap();
-
-      //Dispatch registerSuccess action from authSlice
-      dispatch(registerSuccess(result));
-
-      console.log("Registration successful", result);
-
-      // Save the token if returned
-      localStorage.setItem("token", result.token);
-
-      // Redirect back to homepage afterwards
-      navigate("/");
-    } catch (error) {
-      dispatch(registerFailure(error)); //Dispatch registerFailure action from authSlice
-      console.error("Failed to register:", error);
-      if (error.status === 409) {
-        setErrorMessage(error.data.message); // Set the error message from the server
-      } else {
-        setErrorMessage("An unexpected error occurred. Please try again");
-      }
-    }
+    console.log("Registration submitted");
   };
 
   return (
@@ -79,64 +26,43 @@ const Register = () => {
             {/* Break up into first and last name */}
             <TextField
               label="First Name"
-              name="firstName"
               type="text"
               required
               fullWidth
               variant="outlined"
-              value={formData.firstName}
-              onChange={handleChange}
             />
             <TextField
               label="Last Name"
-              name="lastName"
               type="text"
+              required
               fullWidth
               variant="outlined"
-              value={formData.lastName}
-              onChange={handleChange}
             />
             {/* Add username field */}
             <TextField
               label="Username"
-              name="username"
-              type="text"
-              required
-              fullWidth
-              variant="outlined"
-              value={formData.username}
-              onChange={handleChange}
-            />
-            <TextField
-              label="Email"
-              name="email"
               type="email"
               required
               fullWidth
               variant="outlined"
-              value={formData.email}
-              onChange={handleChange}
+            />
+            <TextField
+              label="Email"
+              type="email"
+              required
+              fullWidth
+              variant="outlined"
             />
             <TextField
               label="Password"
-              name="password"
               type="password"
               required
               fullWidth
               variant="outlined"
-              value={formData.password}
-              onChange={handleChange}
             />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={isLoading}
-            >
-              {isLoading ? "Registering..." : "Register"}
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Register
             </Button>
-            {isError && <Typography color="error">{error.message}</Typography>}
           </Box>
         </form>
       </CardContent>
