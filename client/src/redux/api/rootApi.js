@@ -9,7 +9,10 @@ export const rootApi = createApi({
       // Get the token from localStorage
       const token = localStorage.getItem("token");
       if (token) {
+        console.log("Token found:", token);
         headers.set("Authorization", `Bearer ${token}`);
+      } else {
+        console.log("No token found in localStorage");
       }
       return headers;
     },

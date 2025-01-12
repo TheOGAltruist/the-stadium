@@ -33,12 +33,10 @@ const Login = () => {
     // Regex to check if input is an email, if false it is treated as a username
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginInput);
 
-    // Log or send login data for API handling
-    const loginData = {
-      loginType: isEmail ? "email" : "username",
-      loginValue: loginInput,
-      password,
-    };
+    // Log or send login data for API handling (Andrew: I had to change this to make it send the correct req.body to the backend)
+    const loginData = isEmail
+      ? { email: loginInput, password }
+      : { username: loginInput, password };
 
     // console log for testing regex statement
     console.log("Login Data:", loginData);
@@ -49,7 +47,7 @@ const Login = () => {
       // Handle successful login
       if (user.user && user.token) {
         // Store the token in localStorage
-        localStorage.setItem("token", response.token);
+        localStorage.setItem("token", user.token);
 
         console.log("Login successful", user);
 
@@ -102,7 +100,8 @@ const Login = () => {
               fullWidth
               disabled={isLoading}
             >
-              {isLoading ? "Logging in..." : "Login"}
+              {/* Andrew: I changed this as well */}
+              {isLoading ? "Logging in..." : "Login"} 
             </Button>
             {isError && (
               <Typography color="error" variant="body2" textAlign="center">
