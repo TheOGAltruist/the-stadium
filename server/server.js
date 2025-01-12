@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const authRoutes = require("../server/api/routes/auth.route.js");
 const userRoutes = require("../server/api/routes/user.route.js");
@@ -18,6 +19,12 @@ app.use(require("morgan")("dev"));
 //   next();
 // });
 
+// CORS middleware
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow requests from this origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
+  credentials: true // Allow credentials if needed
+}));
 
 // connect to port
 const port = process.env.PORT;
