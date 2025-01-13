@@ -6,6 +6,7 @@ const userRoutes = require("../server/api/routes/user.route.js");
 const meRoutes = require("../server/api/routes/me.route.js")
 const productRoutes = require('../server/api/routes/product.route.js');
 const reviewRoutes = require('../server/api/routes/review.route.js');
+const adminRoutes = require("./api/routes/admin.route.js")
 
 // Body-parsing middleware
 app.use(express.json());
@@ -29,10 +30,10 @@ app.listen(port, () => {
 
 // use the imported API routes
 app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
 app.use("/api/me", meRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use("/api/admin", adminRoutes)
 
 // Simple error-handling middleware
 app.use((err, req, res, next) => {
