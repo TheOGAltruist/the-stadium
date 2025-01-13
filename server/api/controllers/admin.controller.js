@@ -1,5 +1,29 @@
 const prisma = require("../../prisma/index.js");
 
+//Get all products
+const getAllProducts = async (req, res, next) => {
+    const response = await prisma.product.findMany({
+        relationLoadStrategy: "join",
+        include: {
+            tags: true,
+            categories: true,
+            orderItems: {
+                include: {
+                    order: true
+                }
+            }
+        }
+    });
+
+    if(response){
+        res.send(response)
+    } else {
+        res.status(404).json({
+            message: "No products were found."
+        })
+    }
+}
+
 //Get all orders
 const getAllOrders = async (req, res, next) => {
     const response = await prisma.order.findMany({
@@ -139,6 +163,7 @@ const getAllWishlists = async (req, res, next) => {
 }
 
 module.exports = {
+    getAllProducts,
     getAllOrders,
     changeOrderStatus,
     createNewTag,
