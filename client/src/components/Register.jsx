@@ -17,8 +17,6 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [registerUser, { isLoading, isError, error }] =
-    useRegisterUserMutation();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -26,6 +24,8 @@ const Register = () => {
     email: "",
     password: "",
   });
+  const [registerUser, { isLoading, isError, error }] =
+    useRegisterUserMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -46,8 +46,14 @@ const Register = () => {
 
     // Add API call logic here
     try {
-      const result = await registerUser(formData).unwrap();
-      
+      const result = await registerUser({
+        firstname: formData.firstName,
+        lastname: formData.lastName,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      }).unwrap();
+
       //Dispatch registerSuccess action from authSlice
       dispatch(registerSuccess(result));
 
@@ -61,8 +67,8 @@ const Register = () => {
     } catch (error) {
       dispatch(registerFailure(error)); //Dispatch registerFailure action from authSlice
       console.error("Failed to register:", error);
-      }
-    };
+    }
+  };
 
   return (
     <Card sx={{ maxWidth: 400, margin: "20px auto", padding: "20px" }}>
