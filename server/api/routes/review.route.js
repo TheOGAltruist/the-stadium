@@ -10,7 +10,7 @@ router.get("/:productId", getReviews);
 router.post("/:productId", isLoggedIn, addReview);
 
 // Update a review
-router.put('/:productId', isLoggedIn, updateReview);
+router.patch('/:productId', isLoggedIn, updateReview);
 
 // Delete a review
 router.delete('/:reviewId', isLoggedIn, deleteReview);
