@@ -11,6 +11,7 @@ const {
 } = require("../controllers/product.controller.js")
 
 const {
+    getAllProducts,
     getAllOrders,
     changeOrderStatus,
     createNewTag,
@@ -32,6 +33,7 @@ router.get("/users/:userId", isAdmin, getSpecificUser) //Get specific user
 router.patch("/users/:userId", isAdmin, modifySpecificUser) //Update specific user
 
 //Product routes
+router.get("/products", isAdmin, getAllProducts)
 router.post("/products", isAdmin, createProduct); //Add new product
 router.patch("products/:id", isAdmin, updateProduct); //Update specific product
 router.delete("products/:id", isAdmin, deleteProduct); //Remove a product
