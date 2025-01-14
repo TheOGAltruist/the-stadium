@@ -10,6 +10,8 @@ import AdminAccount from "./components/AdminAccount.jsx";
 import UserHome from "./components/UserHome.jsx";
 import UserOrderHistory from "./components/UserOrderHistory.jsx";
 import Wishlist from "./components/Wishlist.jsx";
+import AllOrders from "./components/AllOrders.jsx";
+import AllUsers from "./components/AllUsers.jsx";
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
           <Route path="/userhome" element={<UserHome />} />
           <Route path="/orderhistory" element={<UserOrderHistory />} />
           <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/allorders" element={<AllOrders />} />
+          <Route path="allusers" element={<AllUsers />} />
         </Routes>
       </div>
     </BrowserRouter>
