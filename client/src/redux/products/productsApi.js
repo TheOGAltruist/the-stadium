@@ -41,4 +41,10 @@ export const productApi = rootApi.injectEndpoints({
   }),
 });
 
-export const { useLoginUserMutation, useRegisterUserMutation } = authApi;
+export const {
+  useGetAllProductsQuery,
+  useGetProductByIdQuery,
+  useCreateProductMutation,
+  useUpdateProductMutation,
+  useDeleteProductMutation,
+} = productApi;
