@@ -5,14 +5,18 @@ const jwt = require("jsonwebtoken");
 //Middleware function for protected routes
 const isLoggedIn = async (req, res, next) => {
   try {
-    const receivedToken = req.headers.authorization.split(" ")[1];
+    const receivedToken = (req.cookies['token']).split(" ")[1];
     req.user = await findUserWithToken(receivedToken);
     next();
   } catch (error) {
-    next({
-      statusCode: 401,
-      message: "Unauthorized",
-    });
+    if(error.message.includes("split")){
+      next({
+        statusCode: 401,
+        message: "Credentials not found. Try again!",
+      });
+    } else {
+      next(error)
+    }
   }
 };
 
@@ -44,11 +48,11 @@ const findUserWithToken = async (token) => {
   let issuer;
 
   try {
-    const payload = await jwt.verify(token, process.env.JWT_SECRET);
+    const payload = await jwt.verify(token, process.env.JWT_SECRET, { issuer: 'the_stadium' });
     id = payload.id;
     issuer = payload.iss;
   } catch (err) {
-    const error = new Error(`Unauthorized. ${err.message}`);
+    const error = new Error(`${err.name} - ${err.message}`);
     error.statusCode = 401;
     throw error;
   }
@@ -68,7 +72,7 @@ const findUserWithToken = async (token) => {
       },
     });
 
-    if (!user || (issuer === "the_stadium") === false) {
+    if (!user) {
       const error = new Error("Unauthorized");
       error.statusCode = 401;
       throw error;
