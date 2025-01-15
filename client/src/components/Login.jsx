@@ -45,14 +45,16 @@ const Login = () => {
     try {
       const user = await loginUser(loginData).unwrap();
       // Handle successful login
-      if (user.user && user.token) {
+      // if (user.user && user.token) {
+      if (user.user) {
         // Store the token in localStorage
-        localStorage.setItem("token", user.token);
+        // localStorage.setItem("token", user.token);
 
         console.log("Login successful", user);
 
         // Dispatch loginSuccess action to store token and user data in Redux
-        dispatch(loginSuccess({ user: user.user, token: user.token }));
+        // dispatch(loginSuccess({ user: user.user, token: user.token }));
+        dispatch(loginSuccess({ user: user.user }));
 
         // Redirect back to homepage
         navigate("/");

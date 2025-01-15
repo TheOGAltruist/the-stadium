@@ -60,7 +60,7 @@ const Register = () => {
       console.log("Registration successful", result);
 
       // Save the token if returned
-      localStorage.setItem("token", result.token);
+      // localStorage.setItem("token", result.token);
 
       // Redirect back to homepage afterwards
       navigate("/");
