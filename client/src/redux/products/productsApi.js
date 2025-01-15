@@ -22,7 +22,15 @@ export const productApi = rootApi.injectEndpoints({
         }),
       }),
   
-
+      // Update products (ADMIN ONLY)
+      updateProduct: builder.mutation({
+        query: ({id, ...updatedProduct}) => ({
+          url: `/products/${id}`,
+          method: "PUT",
+          body: updatedProduct,
+        }),
+      }),
+  
 
   }),
 });
