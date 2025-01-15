@@ -3,237 +3,146 @@ import {
   Box,
   Card,
   CardContent,
-  CardMedia,
   Typography,
   Button,
   Grid,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  List,
-  ListItem,
-  ListItemText,
   CircularProgress,
 } from "@mui/material";
 
-const AllOrders = () => {
-  const [orders, setOrders] = useState([]);
+const AllUsers = () => {
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
 
-  // API fetch logic
-  // useEffect(() => {
-  //   const fetchOrders = async () => {
-  //     try {
-  //       const response = await fetch("/api/orders");
-  //       const data = await response.json();
-  //       setOrders(data);
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error("Error fetching orders:", error);
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchOrders();
-  // }, []);
-
-  // Mock order for development
+  // Mock user data for development
   useEffect(() => {
-    const mockOrders = [
+    const mockUsers = [
       {
-        orderNumber: "12345",
-        datePlaced: "January 1, 2025",
-        totalPrice: "$127.19",
-        items: [
-          {
-            name: "Bowling Ball",
-            price: "$97.10",
-            image: "https://via.placeholder.com/150",
-          },
-          {
-            name: "Fingerless Gloves",
-            price: "$30.09",
-            image: "https://via.placeholder.com/150",
-          },
-        ],
+        id: "1",
+        firstname: "John",
+        lastname: "Doe",
+        username: "johndoe",
+        email: "john@example.com",
+        isAdmin: false,
+        address: {
+          street1: "123 Elm St",
+          street2: "Apt 4B",
+          city: "Springfield",
+          state: "IL",
+          country: "USA",
+          zipcode: 62704,
+        },
       },
       {
-        orderNumber: "67890",
-        datePlaced: "February 15, 2025",
-        totalPrice: "$215.48",
-        items: [
-          {
-            name: "Tennis Racket",
-            price: "$129.99",
-            image: "https://via.placeholder.com/150",
-          },
-          {
-            name: "Tennis Balls (3-pack)",
-            price: "$15.49",
-            image: "https://via.placeholder.com/150",
-          },
-          {
-            name: "Sports Water Bottle",
-            price: "$70.00",
-            image: "https://via.placeholder.com/150",
-          },
-        ],
-      },
-      {
-        orderNumber: "54321",
-        datePlaced: "March 10, 2025",
-        totalPrice: "$79.98",
-        items: [
-          {
-            name: "Soccer Ball",
-            price: "$37.99",
-            image: "https://via.placeholder.com/150",
-          },
-          {
-            name: "Shin Guards",
-            price: "$41.99",
-            image: "https://via.placeholder.com/150",
-          },
-        ],
-      },
-      {
-        orderNumber: "98765",
-        datePlaced: "April 5, 2025",
-        totalPrice: "$354.00",
-        items: [
-          {
-            name: "Hockey Stick",
-            price: "$189.00",
-            image: "https://via.placeholder.com/150",
-          },
-          {
-            name: "Hockey Helmet",
-            price: "$165.00",
-            image: "https://via.placeholder.com/150",
-          },
-        ],
-      },
-      {
-        orderNumber: "13579",
-        datePlaced: "May 22, 2025",
-        totalPrice: "$62.50",
-        items: [
-          {
-            name: "Baseball Glove",
-            price: "$40.00",
-            image: "https://via.placeholder.com/150",
-          },
-          {
-            name: "Baseball Cap",
-            price: "$22.50",
-            image: "https://via.placeholder.com/150",
-          },
-        ],
-      },
-      {
-        orderNumber: "24680",
-        datePlaced: "June 18, 2025",
-        totalPrice: "$142.29",
-        items: [
-          {
-            name: "Basketball",
-            price: "$45.00",
-            image: "https://via.placeholder.com/150",
-          },
-          {
-            name: "Basketball Shoes",
-            price: "$97.29",
-            image: "https://via.placeholder.com/150",
-          },
-        ],
+        id: "2",
+        firstname: "Jane",
+        lastname: "Smith",
+        username: "janesmith",
+        email: "jane@example.com",
+        isAdmin: true,
+        address: {
+          street1: "456 Oak St",
+          city: "Shelbyville",
+          state: "IL",
+          country: "USA",
+          zipcode: 62565,
+        },
       },
     ];
 
-    setOrders(mockOrders);
-    setLoading(false); // Ensure loading is set to false after mock data is added
+    setUsers(mockUsers);
+    setLoading(false);
   }, []);
 
-  // Open dialog to view order details
-  const handleViewDetails = (order) => {
-    setSelectedOrder(order);
-    setOpenDialog(true);
+  const handleToggleAdmin = (id) => {
+    const user = users.find((user) => user.id === id);
+    const action = user.isAdmin ? "demote" : "promote";
+
+    if (window.confirm(`Are you sure you want to ${action} this user?`)) {
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === id ? { ...user, isAdmin: !user.isAdmin } : user
+        )
+      );
+    }
   };
 
-  // Close the dialog
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setSelectedOrder(null);
+  const handleDeleteUser = (id) => {
+    const user = users.find((user) => user.id === id);
+    if (
+      window.confirm(
+        `Are you sure you want to delete user ${user.firstname} ${user.lastname}? This action cannot be undone.`
+      )
+    ) {
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+    }
   };
 
   return (
     <Box sx={{ pt: { xs: "15rem", md: "5rem" } }} align="center">
       <Typography variant="h4" gutterBottom>
-        All Orders
+        All Users
       </Typography>
 
       {loading ? (
         <CircularProgress />
       ) : (
         <Grid container spacing={3}>
-          {orders.map((order, index) => (
-            <Grid item xs={12} key={index}>
+          {users.map((user) => (
+            <Grid item xs={12} key={user.id}>
               <Card variant="outlined">
                 <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    {/* Order Info */}
-                    <Typography variant="h6">
-                      <strong>Order #:</strong> {order.orderNumber}
-                    </Typography>
-                    <Typography variant="body1">
-                      <strong>Date Placed:</strong> {order.datePlaced}
-                    </Typography>
-                    <Typography variant="body1">
-                      <strong>Total Price:</strong> {order.totalPrice}
-                    </Typography>
-                  </Box>
+                  <Typography variant="h6">
+                    <strong>
+                      {user.firstname} {user.lastname}
+                    </strong>
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Username:</strong> {user.username}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Email:</strong> {user.email}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Admin:</strong> {user.isAdmin ? "Yes" : "No"}
+                  </Typography>
 
-                  {/* Thumbnails for all items in the order */}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: "10px",
-                      flexWrap: "wrap",
-                      marginTop: "10px",
-                    }}
-                  >
-                    {order.items.map((item, idx) => (
-                      <CardMedia
-                        key={idx}
-                        component="img"
-                        sx={{
-                          width: "150px",
-                          height: "150px",
-                          borderRadius: "4px",
-                          objectFit: "cover",
-                          border: "1px solid #ccc",
-                        }}
-                        image={item.image}
-                        alt={item.name}
-                      />
-                    ))}
-                  </Box>
+                  {user.address && (
+                    <>
+                      <Typography variant="body1">
+                        <strong>Address:</strong>
+                      </Typography>
+                      <Typography variant="body2">
+                        {user.address.street1}
+                        {user.address.street2
+                          ? ", " + user.address.street2
+                          : ""}
+                      </Typography>
+                      <Typography variant="body2">
+                        {user.address.city}, {user.address.state},{" "}
+                        {user.address.country}
+                      </Typography>
+                      <Typography variant="body2">
+                        {user.address.zipcode}
+                      </Typography>
+                    </>
+                  )}
 
-                  {/* View Details Button */}
                   <Button
                     variant="contained"
-                    color="primary"
-                    onClick={() => handleViewDetails(order)}
+                    color={user.isAdmin ? "secondary" : "primary"}
+                    onClick={() => handleToggleAdmin(user.id)}
+                    sx={{ marginTop: "10px", marginRight: "10px" }}
+                  >
+                    {user.isAdmin ? "Demote from Admin" : "Promote to Admin"}
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => handleDeleteUser(user.id)}
                     sx={{ marginTop: "10px" }}
                   >
-                    View Order Details
+                    Delete User
                   </Button>
                 </CardContent>
               </Card>
@@ -241,59 +150,8 @@ const AllOrders = () => {
           ))}
         </Grid>
       )}
-
-      {/* Dialog for Order Details */}
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>Order Details</DialogTitle>
-        <DialogContent>
-          {selectedOrder && (
-            <>
-              <Typography variant="h6" gutterBottom>
-                <strong>Order #:</strong> {selectedOrder.orderNumber}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Date Placed:</strong> {selectedOrder.datePlaced}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Total Price:</strong> {selectedOrder.totalPrice}
-              </Typography>
-              <Typography variant="h6" sx={{ marginTop: "20px" }}>
-                Items:
-              </Typography>
-              <List>
-                {selectedOrder.items.map((item, index) => (
-                  <ListItem key={index} sx={{ alignItems: "flex-start" }}>
-                    <CardMedia
-                      component="img"
-                      image={item.image}
-                      alt={item.name}
-                      sx={{
-                        width: "150px",
-                        height: "150px",
-                        borderRadius: "4px",
-                        objectFit: "cover",
-                        border: "1px solid #ccc",
-                      }}
-                    />
-                    <ListItemText
-                      primary={item.name}
-                      secondary={`Price: ${item.price}`}
-                      align="right"
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
     </Box>
   );
 };
 
-export default AllOrders;
+export default AllUsers;
