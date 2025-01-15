@@ -1,4 +1,3 @@
-import { getProductById } from "../../../../server/api/controllers/product.controller";
 import { rootApi } from "../api/rootApi";
 
 export const productApi = rootApi.injectEndpoints({
