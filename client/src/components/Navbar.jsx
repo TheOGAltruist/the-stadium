@@ -6,7 +6,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
-const Navbar = () => {
+const Navbar = ({ user }) => {
   return (
     <Box sx={{ width: "100%", overflowX: "hidden" }}>
       <AppBar
@@ -64,7 +64,7 @@ const Navbar = () => {
               to="/checkout"
               startIcon={<ShoppingCartIcon />}
             >
-              Checkout
+              Cart
             </Button>
             <Button
               color="inherit"
@@ -74,14 +74,16 @@ const Navbar = () => {
             >
               Account
             </Button>
-            <Button
-              color="inherit"
-              component={Link}
-              to="/admin"
-              startIcon={<AdminPanelSettingsIcon />}
-            >
-              Admin
-            </Button>
+            {user?.isAdmin && (
+              <Button
+                color="inherit"
+                component={Link}
+                to="/admin"
+                startIcon={<AdminPanelSettingsIcon />}
+              >
+                Admin
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
