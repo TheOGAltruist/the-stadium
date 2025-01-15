@@ -7,31 +7,59 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
+import { useLoginUserMutation } from "../redux/auth/authApi";
+import { useNavigate } from "react-router-dom";
+import {
+  loginFailure,
+  loginStart,
+  loginSuccess,
+} from "../redux/auth/authSlice";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
   // Tracks email or username
   const [loginInput, setLoginInput] = useState("");
   // Tracks password
   const [password, setPassword] = useState("");
+  // integrating RTK Query for calling api/auth/login
+  const [loginUser, { isLoading, isError, error }] = useLoginUserMutation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    dispatch(loginStart());
 
     // Regex to check if input is an email, if false it is treated as a username
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginInput);
 
-    // Log or send login data for API handling
-    const loginData = {
-      loginType: isEmail ? "email" : "username",
-      loginValue: loginInput,
-      password,
-    };
+    // Log or send login data for API handling (Andrew: I had to change this to make it send the correct req.body to the backend)
+    const loginData = isEmail
+      ? { email: loginInput, password }
+      : { username: loginInput, password };
 
     // console log for testing regex statement
     console.log("Login Data:", loginData);
 
     // Add API call logic here
-    console.log("Login submitted");
+    try {
+      const user = await loginUser(loginData).unwrap();
+      // Handle successful login
+      if (user.user && user.token) {
+        // Store the token in localStorage
+        localStorage.setItem("token", user.token);
+
+        console.log("Login successful", user);
+
+        // Dispatch loginSuccess action to store token and user data in Redux
+        dispatch(loginSuccess({ user: user.user, token: user.token }));
+
+        // Redirect back to homepage
+        navigate("/");
+      }
+    } catch (error) {
+      dispatch(loginFailure(error.message || "Failed to login"));
+    }
   };
 
   return (
@@ -65,9 +93,22 @@ const Login = () => {
             />
 
             {/* Submit Button */}
-            <Button type="submit" variant="contained" color="primary" fullWidth>
-              Login
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={isLoading}
+            >
+              {/* Andrew: I changed this as well */}
+              {isLoading ? "Logging in..." : "Login"} 
             </Button>
+            {isError && (
+              <Typography color="error" variant="body2" textAlign="center">
+                {error?.data?.message ||
+                  "Invalid credentials, please try again."}
+              </Typography>
+            )}
           </Box>
         </form>
       </CardContent>
