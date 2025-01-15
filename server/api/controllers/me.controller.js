@@ -397,7 +397,6 @@ const getPaymentMethods = async (req, res, next) => {
                 details: true
             }
         })
-        console.log("Done")
         res.json(response).send()
     } catch (error) {
         next(error)

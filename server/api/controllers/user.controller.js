@@ -42,7 +42,7 @@ const getSpecificUser = async (req, res, next) => {
 //Modify specific user (Admin only)
 const modifySpecificUser = async (req, res, next) => {
 
-    const { firstname, lastname, username, password, email, isAdmin, address_street1, address_street2, address_city, address_state, address_country, address_zipcode } = req.body
+    const { firstname, lastname, username, password, email, isAdmin, address_street1, address_street2, address_city, address_state, address_country, address_zipcode, resetPassword } = req.body
 
     try {
         const existingUser = await prisma.user.findUnique({
@@ -75,6 +75,7 @@ const modifySpecificUser = async (req, res, next) => {
                 address_state: address_state !== undefined ? address_state : existingUser.address_state,
                 address_country: address_country !== undefined ? address_country : existingUser.address_country,
                 address_zipcode: address_zipcode !== undefined ? address_zipcode : existingUser.address_zipcode,
+                resetPassword: resetPassword !== undefined ? resetPassword : existingUser.resetPassword,
                 updated_at: new Date()
             }
         })
