@@ -4,6 +4,7 @@ const {
     logout,
     forgotPassword,
     passwordReset,
+    oauthRegister,
 } = require("../controllers/auth.controller.js")
 const { isLoggedIn } = require("../middleware/middleware.util.js")
 
@@ -14,4 +15,5 @@ router.post("/login", login)
 router.post("/register", register)
 router.post("/logout", isLoggedIn, logout)
 router.post("/forgotpassword", forgotPassword)
-router.get("/passwordreset", passwordReset)
+router.post("/passwordreset", passwordReset)
+router.post("/register/oauth", oauthRegister)

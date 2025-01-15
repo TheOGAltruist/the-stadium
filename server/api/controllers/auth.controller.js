@@ -34,7 +34,7 @@ const login = async (req, res, next) => {
             })
         } else {
             const token = await jwt.sign({ id: response.id, username: response.username, iss: "the_stadium" }, process.env.JWT_SECRET, { expiresIn: '1h', notBefore: 0 })
-            const {id, password, isAdmin, resetPassToken, currentToken, ...rest} = response;
+            const {id, password, isAdmin, resetPassToken, currentToken, resetPassTokenExpiry,  ...rest} = response;
 
             try{
                 await addTempToken(id, token)
@@ -74,7 +74,7 @@ const register = async (req, res, next) => {
         })
         
         const token = await jwt.sign({ id: response.id, username: response.username, iss: "the_stadium" }, process.env.JWT_SECRET, { expiresIn: '1h', notBefore: 0 })
-        const {id, password, isAdmin, ...rest} = response;
+        const {id, password, isAdmin, resetPassToken, currentToken, resetPassTokenExpiry, ...rest} = response;
         
         try{
             await addTempToken(id, token)
@@ -97,6 +97,44 @@ const register = async (req, res, next) => {
             statusCode: 409,
             message: "Username or Email Address is not unique. Please try again!"
         })
+    }
+}
+
+//Register using OAuth
+const oauthRegister = async (req, res, next) => {
+    try {
+        const response = await prisma.user.create({
+            data: {
+                data: {
+                    firstname: req.body.firstname,
+                    lastname: req.body.lastname,
+                    username: req.body.username,
+                    password: await bcrypt.hash(await nanoid(20), Math.floor(Math.random() * 10) + 1),
+                    email: req.body.email
+                }
+            }
+        })
+
+        const token = await jwt.sign({ id: response.id, username: response.username, iss: "the_stadium" }, process.env.JWT_SECRET, { expiresIn: '1h', notBefore: 0 })
+        const {id, password, isAdmin, resetPassToken, currentToken, resetPassTokenExpiry, ...rest} = response;
+        
+        try{
+            await addTempToken(id, token)
+            
+            res
+            .cookie("token", `Bearer ${token}`, { httpOnly: true, sameSite: "strict", expires: new Date(Date.now() + 3600000) })
+            .json({
+                user: rest
+            })
+
+        }
+        catch{
+            const error = new Error("Registration successful. Unable to sign-in at the moment. Please try after some time with the newly registered account!");
+            error.statusCode = 500;
+            throw error;
+        }
+    } catch (error) {
+        
     }
 }
 
@@ -267,4 +305,5 @@ module.exports = {
     logout,
     forgotPassword,
     passwordReset,
+    oauthRegister,
 }
