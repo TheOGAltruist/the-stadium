@@ -8,6 +8,11 @@ export const productApi = rootApi.injectEndpoints({
       query: () => "/products",
     }),
 
+    // Get a product by ID
+    getProductById: builder.query({
+        query: (id) => `/products/${id}`,
+      }),
+  
 
 
   }),
