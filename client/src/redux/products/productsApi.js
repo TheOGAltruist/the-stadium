@@ -10,28 +10,34 @@ export const productApi = rootApi.injectEndpoints({
 
     // Get a product by ID
     getProductById: builder.query({
-        query: (id) => `/products/${id}`,
-      }),
-  
-      // Create Product (ADMIN ONLY)
-      createProduct: builder.mutation({
-        query: (newProduct) => ({
-          url: "/products",
-          method: "POST",
-          body: newProduct,
-        }),
-      }),
-  
-      // Update products (ADMIN ONLY)
-      updateProduct: builder.mutation({
-        query: ({id, ...updatedProduct}) => ({
-          url: `/products/${id}`,
-          method: "PUT",
-          body: updatedProduct,
-        }),
-      }),
-  
+      query: (id) => `/products/${id}`,
+    }),
 
+    // Create Product (ADMIN ONLY)
+    createProduct: builder.mutation({
+      query: (newProduct) => ({
+        url: "/products",
+        method: "POST",
+        body: newProduct,
+      }),
+    }),
+
+    // Update products (ADMIN ONLY)
+    updateProduct: builder.mutation({
+      query: ({ id, ...updatedProduct }) => ({
+        url: `/products/${id}`,
+        method: "PUT",
+        body: updatedProduct,
+      }),
+    }),
+
+    //   Delete products (ADMIN ONLY)
+    deleteProduct: builder.mutation({
+      query: (id) => ({
+        url: `/products/${id}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
