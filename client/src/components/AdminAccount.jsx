@@ -21,6 +21,8 @@ const AdminAccount = () => {
     quantity: "",
     imageUrl: "",
     imageFile: null,
+    tags: "",
+    categories: "",
   });
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
@@ -41,8 +43,21 @@ const AdminAccount = () => {
     }));
   };
 
+  const formatInput = (input) => {
+    return input
+      .split(",")
+      .map(
+        (item) =>
+          item.trim().charAt(0).toUpperCase() +
+          item.trim().slice(1).toLowerCase()
+      )
+      .join(", ");
+  };
+
   const handleProductSubmit = () => {
-    // Add sending to database functionality here
+    // Format tags and categories
+    const formattedTags = formatInput(productData.tags);
+    const formattedCategories = formatInput(productData.categories);
 
     // Example payload
     const payload = {
@@ -53,7 +68,11 @@ const AdminAccount = () => {
       image: productData.imageFile
         ? "uploaded_file_placeholder"
         : productData.imageUrl,
+      tags: formattedTags.split(", "),
+      categories: formattedCategories.split(", "),
     };
+
+    // Add sending to database functionality here
 
     // Display success message and reset form
     setSuccessMessage("Product successfully added!");
@@ -64,6 +83,8 @@ const AdminAccount = () => {
       quantity: "",
       imageUrl: "",
       imageFile: null,
+      tags: "",
+      categories: "",
     });
 
     // Clears success message after 3 seconds
@@ -79,6 +100,8 @@ const AdminAccount = () => {
       quantity: "",
       imageUrl: "",
       imageFile: null,
+      tags: "",
+      categories: "",
     });
     setSuccessMessage("");
   };
@@ -224,6 +247,28 @@ const AdminAccount = () => {
                   {productData.imageFile.name} selected
                 </Typography>
               )}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Tags (comma-separated)"
+                name="tags"
+                value={productData.tags}
+                onChange={handleInputChange}
+                fullWidth
+                variant="outlined"
+                placeholder="e.g., sports, outdoor, basketball"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Categories (comma-separated)"
+                name="categories"
+                value={productData.categories}
+                onChange={handleInputChange}
+                fullWidth
+                variant="outlined"
+                placeholder="e.g., Equipment, Basketball"
+              />
             </Grid>
             <Grid
               item

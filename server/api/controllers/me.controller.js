@@ -17,7 +17,7 @@ const getMe = async (req, res, next) => {
             }
         });
 
-        const {id, password, isAdmin, ...rest} = me;
+        const {id, password, isAdmin, resetPassToken, currentToken, resetPassTokenExpiry, ...rest} = me;
 
         res.json(rest)
     } catch (error) {
