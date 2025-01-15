@@ -6,16 +6,10 @@ export const rootApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:3000/api",
     prepareHeaders: (headers) => {
-      // Get the token from localStorage
-      const token = localStorage.getItem("token");
-      if (token) {
-        console.log("Token found:", token);
-        headers.set("Authorization", `Bearer ${token}`);
-      } else {
-        console.log("No token found in localStorage");
-      }
-      return headers;
+      // Get the token from cookies saved from backend
+      headers.set("Content-type", "application/json");
     },
+    // credentials: "include",
   }),
   endpoints: (builder) => ({}),
 });
