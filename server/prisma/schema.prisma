@@ -28,6 +28,10 @@ model User {
   address_state String?
   address_country String?
   address_zipcode Int?
+  resetPassword Boolean?
+  resetPassToken String?
+  resetPassTokenExpiry DateTime?
+  currentToken String[]
   reviews Review[]
   payment_methods PaymentMethod[]
   wishlists Wishlist[]
