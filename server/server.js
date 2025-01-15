@@ -2,15 +2,16 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const authRoutes = require("../server/api/routes/auth.route.js");
-const userRoutes = require("../server/api/routes/user.route.js");
-const meRoutes = require("../server/api/routes/me.route.js")
+const meRoutes = require("../server/api/routes/me.route.js");
 const productRoutes = require('../server/api/routes/product.route.js');
 const reviewRoutes = require('../server/api/routes/review.route.js');
-const adminRoutes = require("./api/routes/admin.route.js")
+const adminRoutes = require("./api/routes/admin.route.js");
+const cookieParser = require('cookie-parser');
 
 // Body-parsing middleware
 app.use(express.json());
 app.use(require("morgan")("dev"));
+app.use(cookieParser());
 
 // // logger middleware
 // app.use((req, res, next) => {
