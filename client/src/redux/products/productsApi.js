@@ -13,6 +13,15 @@ export const productApi = rootApi.injectEndpoints({
         query: (id) => `/products/${id}`,
       }),
   
+      // Create Product (ADMIN ONLY)
+      createProduct: builder.mutation({
+        query: (newProduct) => ({
+          url: "/products",
+          method: "POST",
+          body: newProduct,
+        }),
+      }),
+  
 
 
   }),
