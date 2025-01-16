@@ -36,6 +36,15 @@ export const adminApi = rootApi.injectEndpoints({
     getSpecificUser: builder.query({
       query: (userId) => `/users/${userId}`,
     }),
+    modifySpecificUser: builder.mutation({
+      query: ({ userId, ...patch }) => ({
+        url: `/users/${userId}`,
+        method: "PATCH",
+        body: patch,
+      }),
+    }),
+
+
   }),
 });
 
@@ -45,4 +54,5 @@ export const {
   useDeleteProductMutation,
   useGetAllUsersQuery,
   useGetSpecificUserQuery,
+  useModifySpecificUserMutation,
 } = adminApi;
