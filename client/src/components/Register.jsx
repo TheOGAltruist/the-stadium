@@ -24,6 +24,7 @@ const Register = () => {
     email: "",
     password: "",
   });
+  const [errors, setErrors] = useState({});
   const [registerUser, { isLoading, isError, error }] =
     useRegisterUserMutation();
   const navigate = useNavigate();
@@ -37,9 +38,30 @@ const Register = () => {
     });
   };
 
+  // Validate Register Form data
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.firstName) newErrors.firstName = "First Name is required.";
+    if (!formData.username) newErrors.username = "Username is required.";
+    if (!formData.email) {
+      newErrors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Email is not valid.";
+    }
+    if (!formData.password) {
+      newErrors.password = "Password is required.";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   // Form submission handler
   const handleRegister = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     //Dispatch registerStart action from authSlice
     dispatch(registerStart());
     console.log(formData);
@@ -88,6 +110,8 @@ const Register = () => {
               variant="outlined"
               value={formData.firstName}
               onChange={handleChange}
+              error={!!errors.firstName} //this is how we can show the form validation errors
+              helperText={errors.firstName} //here as well
             />
             <TextField
               label="Last Name"
@@ -108,6 +132,8 @@ const Register = () => {
               variant="outlined"
               value={formData.username}
               onChange={handleChange}
+              error={!!errors.username} //form validation errors
+              helperText={errors.username} //form validation errors
             />
             <TextField
               label="Email"
@@ -118,6 +144,8 @@ const Register = () => {
               variant="outlined"
               value={formData.email}
               onChange={handleChange}
+              error={!!errors.email}
+              helperText={errors.email}
             />
             <TextField
               label="Password"
@@ -128,6 +156,8 @@ const Register = () => {
               variant="outlined"
               value={formData.password}
               onChange={handleChange}
+              error={!!errors.password} //form validation errors
+              helperText={errors.password} //form validation errors
             />
             <Button
               type="submit"

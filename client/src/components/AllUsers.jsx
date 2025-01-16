@@ -8,74 +8,88 @@ import {
   Grid,
   CircularProgress,
 } from "@mui/material";
+import {
+  useGetAllUsersQuery,
+  useModifySpecificUserMutation,
+} from "../redux/admin/adminApi";
 
 const AllUsers = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [users, setUsers] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  const { data: users, isLoading, error } = useGetAllUsersQuery();
+  const [modifyUser] = useModifySpecificUserMutation();
 
-  // Mock user data for development
-  useEffect(() => {
-    const mockUsers = [
-      {
-        id: "1",
-        firstname: "John",
-        lastname: "Doe",
-        username: "johndoe",
-        email: "john@example.com",
-        isAdmin: false,
-        address: {
-          street1: "123 Elm St",
-          street2: "Apt 4B",
-          city: "Springfield",
-          state: "IL",
-          country: "USA",
-          zipcode: 62704,
-        },
-      },
-      {
-        id: "2",
-        firstname: "Jane",
-        lastname: "Smith",
-        username: "janesmith",
-        email: "jane@example.com",
-        isAdmin: true,
-        address: {
-          street1: "456 Oak St",
-          city: "Shelbyville",
-          state: "IL",
-          country: "USA",
-          zipcode: 62565,
-        },
-      },
-    ];
+  // // Mock user data for development
+  // useEffect(() => {
+  //   const mockUsers = [
+  //     {
+  //       id: "1",
+  //       firstname: "John",
+  //       lastname: "Doe",
+  //       username: "johndoe",
+  //       email: "john@example.com",
+  //       isAdmin: false,
+  //       address: {
+  //         street1: "123 Elm St",
+  //         street2: "Apt 4B",
+  //         city: "Springfield",
+  //         state: "IL",
+  //         country: "USA",
+  //         zipcode: 62704,
+  //       },
+  //     },
+  //     {
+  //       id: "2",
+  //       firstname: "Jane",
+  //       lastname: "Smith",
+  //       username: "janesmith",
+  //       email: "jane@example.com",
+  //       isAdmin: true,
+  //       address: {
+  //         street1: "456 Oak St",
+  //         city: "Shelbyville",
+  //         state: "IL",
+  //         country: "USA",
+  //         zipcode: 62565,
+  //       },
+  //     },
+  //   ];
 
-    setUsers(mockUsers);
-    setLoading(false);
-  }, []);
+  //   setUsers(mockUsers);
+  //   setLoading(false);
+  // }, []);
 
-  const handleToggleAdmin = (id) => {
+  const handleToggleAdmin = async (id) => {
     const user = users.find((user) => user.id === id);
     const action = user.isAdmin ? "demote" : "promote";
 
     if (window.confirm(`Are you sure you want to ${action} this user?`)) {
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === id ? { ...user, isAdmin: !user.isAdmin } : user
-        )
-      );
+      try {
+        // Call modifyUser mutation
+        await modifyUser({ userId: id, isAdmin: !user.isAdmin }).unwrap();
+        alert(`User ${action}d successfully.`);
+      } catch (error) {
+        console.error("Failed to update user", error);
+        alert("Failed to update user");
+      }
+      // setUsers((prevUsers) =>
+      //   prevUsers.map((user) =>
+      //     user.id === id ? { ...user, isAdmin: !user.isAdmin } : user
+      //   )
+      // );
     }
   };
 
-  const handleDeleteUser = (id) => {
-    const user = users.find((user) => user.id === id);
-    if (
-      window.confirm(
-        `Are you sure you want to delete user ${user.firstname} ${user.lastname}? This action cannot be undone.`
-      )
-    ) {
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
-    }
-  };
+  // const handleDeleteUser = (id) => {
+  //   const user = users.find((user) => user.id === id);
+  //   if (
+  //     window.confirm(
+  //       `Are you sure you want to delete user ${user.firstname} ${user.lastname}? This action cannot be undone.`
+  //     )
+  //   ) {
+  //     setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+  //   }
+  // };
 
   return (
     <Box sx={{ pt: { xs: "15rem", md: "5rem" } }} align="center">
@@ -83,8 +97,12 @@ const AllUsers = () => {
         All Users
       </Typography>
 
-      {loading ? (
+      {isLoading ? (
         <CircularProgress />
+      ) : error ? (
+        <Typography variant="body1" color="error">
+          Error loading users.
+        </Typography>
       ) : (
         <Grid container spacing={3}>
           {users.map((user) => (
@@ -136,14 +154,14 @@ const AllUsers = () => {
                     {user.isAdmin ? "Demote from Admin" : "Promote to Admin"}
                   </Button>
 
-                  <Button
+                  {/* <Button
                     variant="contained"
                     color="error"
                     onClick={() => handleDeleteUser(user.id)}
                     sx={{ marginTop: "10px" }}
                   >
                     Delete User
-                  </Button>
+                  </Button> */}
                 </CardContent>
               </Card>
             </Grid>

@@ -15,120 +15,126 @@ import {
   ListItemText,
   CircularProgress,
 } from "@mui/material";
+import {
+  useChangeOrderStatusMutation,
+  useGetAllOrdersQuery,
+} from "../redux/admin/adminApi";
 
 const AllOrders = () => {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [orders, setOrders] = useState([]);
+  // const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const { data: orders, isLoading, error } = useGetAllOrdersQuery();
+  const [changeOrderStatus] = useChangeOrderStatusMutation();
 
-  // Mock order for development
-  useEffect(() => {
-    const mockOrders = [
-      {
-        order_id: "12345",
-        created_at: "2025-01-01T00:00:00Z",
-        status: "Created",
-        user: "John Doe",
-        paymentMethod: "Credit Card",
-        orderItems: [
-          {
-            product: {
-              name: "Bowling Ball",
-              product_id: "BB123",
-              price: 97.1,
-              image: "https://via.placeholder.com/150",
-            },
-            quantity: 1,
-          },
-          {
-            product: {
-              name: "Fingerless Gloves",
-              product_id: "FG456",
-              price: 30.09,
-              image: "https://via.placeholder.com/150",
-            },
-            quantity: 1,
-          },
-        ],
-      },
-      {
-        order_id: "67890",
-        created_at: "2025-02-15T00:00:00Z",
-        status: "Created",
-        user: "Jane Smith",
-        paymentMethod: "PayPal",
-        orderItems: [
-          {
-            product: {
-              name: "Tennis Racket",
-              product_id: "TR789",
-              price: 129.99,
-              image: "https://via.placeholder.com/150",
-            },
-            quantity: 1,
-          },
-          {
-            product: {
-              name: "Tennis Balls (3-pack)",
-              product_id: "TB101",
-              price: 15.49,
-              image: "https://via.placeholder.com/150",
-            },
-            quantity: 1,
-          },
-        ],
-      },
-      {
-        order_id: "54321",
-        created_at: "2025-03-10T00:00:00Z",
-        status: "Created",
-        user: "Bob Johnson",
-        paymentMethod: "Debit Card",
-        orderItems: [
-          {
-            product: {
-              name: "Soccer Ball",
-              product_id: "SB234",
-              price: 37.99,
-              image: "https://via.placeholder.com/150",
-            },
-            quantity: 2,
-          },
-          {
-            product: {
-              name: "Shin Guards",
-              product_id: "SG567",
-              price: 41.99,
-              image: "https://via.placeholder.com/150",
-            },
-            quantity: 1,
-          },
-        ],
-      },
-    ];
+  // // Mock order for development
+  // useEffect(() => {
+  //   const mockOrders = [
+  //     {
+  //       order_id: "12345",
+  //       created_at: "2025-01-01T00:00:00Z",
+  //       status: "Created",
+  //       user: "John Doe",
+  //       paymentMethod: "Credit Card",
+  //       orderItems: [
+  //         {
+  //           product: {
+  //             name: "Bowling Ball",
+  //             product_id: "BB123",
+  //             price: 97.1,
+  //             image: "https://via.placeholder.com/150",
+  //           },
+  //           quantity: 1,
+  //         },
+  //         {
+  //           product: {
+  //             name: "Fingerless Gloves",
+  //             product_id: "FG456",
+  //             price: 30.09,
+  //             image: "https://via.placeholder.com/150",
+  //           },
+  //           quantity: 1,
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       order_id: "67890",
+  //       created_at: "2025-02-15T00:00:00Z",
+  //       status: "Created",
+  //       user: "Jane Smith",
+  //       paymentMethod: "PayPal",
+  //       orderItems: [
+  //         {
+  //           product: {
+  //             name: "Tennis Racket",
+  //             product_id: "TR789",
+  //             price: 129.99,
+  //             image: "https://via.placeholder.com/150",
+  //           },
+  //           quantity: 1,
+  //         },
+  //         {
+  //           product: {
+  //             name: "Tennis Balls (3-pack)",
+  //             product_id: "TB101",
+  //             price: 15.49,
+  //             image: "https://via.placeholder.com/150",
+  //           },
+  //           quantity: 1,
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       order_id: "54321",
+  //       created_at: "2025-03-10T00:00:00Z",
+  //       status: "Created",
+  //       user: "Bob Johnson",
+  //       paymentMethod: "Debit Card",
+  //       orderItems: [
+  //         {
+  //           product: {
+  //             name: "Soccer Ball",
+  //             product_id: "SB234",
+  //             price: 37.99,
+  //             image: "https://via.placeholder.com/150",
+  //           },
+  //           quantity: 2,
+  //         },
+  //         {
+  //           product: {
+  //             name: "Shin Guards",
+  //             product_id: "SG567",
+  //             price: 41.99,
+  //             image: "https://via.placeholder.com/150",
+  //           },
+  //           quantity: 1,
+  //         },
+  //       ],
+  //     },
+  //   ];
 
-    const transformedOrders = mockOrders.map((order) => ({
-      orderNumber: order.order_id,
-      datePlaced: new Date(order.created_at).toLocaleDateString(),
-      totalPrice: `$${order.orderItems
-        .reduce((total, item) => total + item.product.price * item.quantity, 0)
-        .toFixed(2)}`,
-      status: order.status,
-      user: order.user,
-      paymentMethod: order.paymentMethod,
-      items: order.orderItems.map((item) => ({
-        name: item.product.name,
-        productId: item.product.product_id,
-        price: `$${(item.product.price * item.quantity).toFixed(2)}`,
-        quantity: item.quantity,
-        image: item.product.image || "https://via.placeholder.com/150",
-      })),
-    }));
+  //   const transformedOrders = mockOrders.map((order) => ({
+  //     orderNumber: order.order_id,
+  //     datePlaced: new Date(order.created_at).toLocaleDateString(),
+  //     totalPrice: `$${order.orderItems
+  //       .reduce((total, item) => total + item.product.price * item.quantity, 0)
+  //       .toFixed(2)}`,
+  //     status: order.status,
+  //     user: order.user,
+  //     paymentMethod: order.paymentMethod,
+  //     items: order.orderItems.map((item) => ({
+  //       name: item.product.name,
+  //       productId: item.product.product_id,
+  //       price: `$${(item.product.price * item.quantity).toFixed(2)}`,
+  //       quantity: item.quantity,
+  //       image: item.product.image || "https://via.placeholder.com/150",
+  //     })),
+  //   }));
 
-    setOrders(transformedOrders);
-    setLoading(false);
-  }, []);
+  //   setOrders(transformedOrders);
+  //   setLoading(false);
+  // }, []);
 
   // Open dialog to view order details
   const handleViewDetails = (order) => {
@@ -142,16 +148,27 @@ const AllOrders = () => {
     setSelectedOrder(null);
   };
 
-  // Handle status updates
-  const handleStatusUpdate = (orderNumber, newStatus) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.orderNumber === orderNumber
-          ? { ...order, status: newStatus }
-          : order
-      )
-    );
+  // Handle status updates (USE ChangeOrderStatus Mutation)
+  const handleStatusUpdate = async (orderNumber, newStatus) => {
+    try {
+      await changeOrderStatus({
+        orderId: orderNumber,
+        status: newStatus,
+      }).unwrap();
+      alert(`Order status updated to ${newStatus}`);
+    } catch (error) {
+      console.error("Failed to update order status");
+      alert("Failed to update order status");
+    }
   };
+  //   setOrders((prevOrders) =>
+  //     prevOrders.map((order) =>
+  //       order.orderNumber === orderNumber
+  //         ? { ...order, status: newStatus }
+  //         : order
+  //     )
+  //   );
+  // };
 
   // Get status styles
   const getStatusStyles = (status) => {
@@ -175,8 +192,12 @@ const AllOrders = () => {
         All Orders
       </Typography>
 
-      {loading ? (
+      {isLoading ? (
         <CircularProgress />
+      ) : error ? (
+        <Typography variant="body1" color="error">
+          Error loading orders.
+        </Typography>
       ) : (
         <Grid container spacing={3}>
           {orders.map((order, index) => (
