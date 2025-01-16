@@ -79,20 +79,25 @@ export const adminApi = rootApi.injectEndpoints({
     // ***CATEGORY-RELATED ENDPOINTS***
     // Create a new category
     createNewCategory: builder.mutation({
-        query: (newCategory) => ({
-            url: '/categories',
-            method: 'POST',
-            body: newCategory,
-        }),
+      query: (newCategory) => ({
+        url: "/categories",
+        method: "POST",
+        body: newCategory,
+      }),
     }),
     // Delete/remove category
     deleteCategory: builder.mutation({
-        query: (categoryId) => ({
-            url: `/categories/${categoryId}`,
-            method: 'DELETE',
-        }),
+      query: (categoryId) => ({
+        url: `/categories/${categoryId}`,
+        method: "DELETE",
+      }),
     }),
 
+    // ***WISHLIST-RELATED ENDPOINTS***
+    // Get all wishlists
+    getAllWishlists: builder.query({
+      query: () => "/wishlists",
+    }),
   }),
 });
 
@@ -109,4 +114,5 @@ export const {
   useDeleteTagMutation,
   useCreateNewCategoryMutation,
   useDeleteCategoryMutation,
+  useGetAllWishlistsQuery,
 } = adminApi;
