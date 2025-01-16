@@ -3,6 +3,10 @@ import { rootApi } from "../api/rootApi";
 export const adminApi = rootApi.injectEndpoints({
   endpoints: (builder) => ({
     // ***PRODUCT-RELATED ENDPOINTS***
+    // Get all Products
+    getAllProducts: builder.query({
+      query: () => "/admin/products",
+    }),
     // Create Product
     createProduct: builder.mutation({
       query: (newProduct) => ({
@@ -102,6 +106,7 @@ export const adminApi = rootApi.injectEndpoints({
 });
 
 export const {
+  useGetAllProductsQuery,
   useCreateProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
