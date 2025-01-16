@@ -2,7 +2,7 @@ import { rootApi } from "../api/rootApi";
 
 export const adminApi = rootApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Product-related endpoints
+    // ***PRODUCT-RELATED ENDPOINTS***
     // Create Product
     createProduct: builder.mutation({
       query: (newProduct) => ({
@@ -27,7 +27,7 @@ export const adminApi = rootApi.injectEndpoints({
       }),
     }),
 
-    //   User-related endpoints
+    //   ***USER-RELATED ENDPOINTS***
     // Get all users
     getAllUsers: builder.query({
       query: () => "/users",
@@ -45,11 +45,12 @@ export const adminApi = rootApi.injectEndpoints({
       }),
     }),
 
-    // Order-related endpoints
+    // ***ORDER-RELATED ENDPOINTS***
     // Get all orders
     getAllOrders: builder.query({
       query: () => "/orders",
     }),
+    // Change Order Status
     changeOrderStatus: builder.mutation({
       query: ({ orderId, ...patch }) => ({
         url: `/orders/${orderId}`,
@@ -58,6 +59,16 @@ export const adminApi = rootApi.injectEndpoints({
       }),
     }),
 
+    // ***TAG-RELATED ENDPOINTS***
+    // Create a new tag
+    createNewTag: builder.mutation({
+        query: (newTag) => ({
+            url: '/tags',
+            method: 'POST',
+            body: newTag,
+        }),
+    }),
+    
 
   }),
 });
