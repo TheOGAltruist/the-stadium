@@ -60,9 +60,35 @@ const AdminAccount = () => {
       .join(", ");
   };
 
-  
+  const validateForm = () => {
+    const newErrors = {};
+    if (!productData.name) newErrors.name = "Product name is required!";
+    if (!productData.description)
+      newErrors.description = "Description is required!";
+    if (
+      !productData.price ||
+      isNaN(productData.price) ||
+      productData.price <= 0
+    ) {
+      newErrors.price = "Valid price is required!";
+    }
+    if (
+      !productData.quantity ||
+      isNaN(productData.quantity) ||
+      productData.quantity < 0
+    ) {
+      newErrors.quantity = "Valid quantity is required!";
+    }
+    if (!productData.imageUrl && !productData.imageFile) {
+      newErrors.image = "Image URL or file is missing & required!";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleProductSubmit = async () => {
+    if (!validateForm()) return;
+
     // Format tags and categories
     const formattedTags = formatInput(productData.tags);
     const formattedCategories = formatInput(productData.categories);
@@ -97,7 +123,7 @@ const AdminAccount = () => {
       });
     } catch (error) {
       console.error("Failed to add product", error);
-    };
+    }
 
     // Clears success message after 3 seconds
     setTimeout(() => setSuccessMessage(""), 3000);
@@ -168,6 +194,13 @@ const AdminAccount = () => {
           {successMessage && (
             <Alert severity="success" sx={{ mb: 2 }}>
               {successMessage}
+            </Alert>
+          )}
+
+          {/* Show error message if there is an error adding product */}
+          {isError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error?.data?.message || "Failed to add product"}
             </Alert>
           )}
 
