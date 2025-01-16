@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Upload as UploadIcon, Close as CloseIcon } from "@mui/icons-material";
+import { useCreateProductMutation } from "../redux/admin/adminApi";
 
 const AdminAccount = () => {
   const [showProductForm, setShowProductForm] = useState(false);
@@ -24,8 +25,13 @@ const AdminAccount = () => {
     tags: "",
     categories: "",
   });
+  const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
+
+  // Initialize the createProduct mutation
+  const [createProduct, { isLoading, isError, error }] =
+    useCreateProductMutation();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +60,9 @@ const AdminAccount = () => {
       .join(", ");
   };
 
-  const handleProductSubmit = () => {
+  
+
+  const handleProductSubmit = async () => {
     // Format tags and categories
     const formattedTags = formatInput(productData.tags);
     const formattedCategories = formatInput(productData.categories);
@@ -72,20 +80,24 @@ const AdminAccount = () => {
       categories: formattedCategories.split(", "),
     };
 
-    // Add sending to database functionality here
-
-    // Display success message and reset form
-    setSuccessMessage("Product successfully added!");
-    setProductData({
-      name: "",
-      description: "",
-      price: "",
-      quantity: "",
-      imageUrl: "",
-      imageFile: null,
-      tags: "",
-      categories: "",
-    });
+    // Call the createProduct mutation (to backend)
+    try {
+      await createProduct(payload).unwrap();
+      //Display the success message and reset form
+      setSuccessMessage("Product successfully added");
+      setProductData({
+        name: "",
+        description: "",
+        price: "",
+        quantity: "",
+        imageUrl: "",
+        imageFile: null,
+        tags: "",
+        categories: "",
+      });
+    } catch (error) {
+      console.error("Failed to add product", error);
+    };
 
     // Clears success message after 3 seconds
     setTimeout(() => setSuccessMessage(""), 3000);
