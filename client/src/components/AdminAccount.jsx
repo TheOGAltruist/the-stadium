@@ -11,7 +11,10 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Upload as UploadIcon, Close as CloseIcon } from "@mui/icons-material";
-import { useCreateProductMutation } from "../redux/admin/adminApi";
+import {
+  useCreateProductMutation,
+  useUpdateProductMutation,
+} from "../redux/admin/adminApi";
 
 const AdminAccount = () => {
   const [showProductForm, setShowProductForm] = useState(false);
@@ -29,9 +32,9 @@ const AdminAccount = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
 
-  // Initialize the createProduct mutation
-  const [createProduct, { isLoading, isError, error }] =
-    useCreateProductMutation();
+  // Initialize the Product-related mutations
+  const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
+  const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -106,11 +109,18 @@ const AdminAccount = () => {
       categories: formattedCategories.split(", "),
     };
 
-    // Call the createProduct mutation (to backend)
+  // API Calls to the backend
     try {
+      if (productData.id) {
+        // Update product if ID exists
+        await updateProduct(payload).unwrap();
+        setSuccessMessage("Product successfully updated!");
+      } else {
+          // Call the createProduct mutation (to backend)
       await createProduct(payload).unwrap();
       //Display the success message and reset form
       setSuccessMessage("Product successfully added");
+    }
       setProductData({
         name: "",
         description: "",
@@ -197,13 +207,6 @@ const AdminAccount = () => {
             </Alert>
           )}
 
-          {/* Show error message if there is an error adding product */}
-          {isError && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error?.data?.message || "Failed to add product"}
-            </Alert>
-          )}
-
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -214,6 +217,8 @@ const AdminAccount = () => {
                 fullWidth
                 variant="outlined"
                 required
+                error={!!errors.name}
+                helperText={errors.name}
               />
             </Grid>
             <Grid item xs={12}>
@@ -227,6 +232,8 @@ const AdminAccount = () => {
                 rows={4}
                 variant="outlined"
                 required
+                error={!!errors.description}
+                helperText={errors.description}
               />
             </Grid>
             <Grid item xs={6}>
@@ -244,6 +251,8 @@ const AdminAccount = () => {
                     <InputAdornment position="start">$</InputAdornment>
                   ),
                 }}
+                error={!!errors.price}
+                helperText={errors.price}
               />
             </Grid>
             <Grid item xs={6}>
@@ -256,6 +265,8 @@ const AdminAccount = () => {
                 fullWidth
                 variant="outlined"
                 required
+                error={!!errors.quantity}
+                helperText={errors.quantity}
               />
             </Grid>
             <Grid item xs={12}>
@@ -267,6 +278,8 @@ const AdminAccount = () => {
                 fullWidth
                 variant="outlined"
                 placeholder="Enter image URL or upload a file"
+                error={!!errors.image}
+                helperText={errors.image}
               />
             </Grid>
             <Grid item xs={12}>

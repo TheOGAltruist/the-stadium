@@ -7,6 +7,9 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 const Navbar = ({ user }) => {
+  // debugging isAdmin panel to show
+  console.log("User Object", user);
+
   return (
     <Box sx={{ width: "100%", overflowX: "hidden" }}>
       <AppBar
