@@ -2,36 +2,47 @@ import { rootApi } from "../api/rootApi";
 
 export const adminApi = rootApi.injectEndpoints({
   endpoints: (builder) => ({
-   // Create Product (ADMIN ONLY)
-   createProduct: builder.mutation({
-    query: (newProduct) => ({
-      url: "/products",
-      method: "POST",
-      body: newProduct,
+    // Product-related endpoints
+    // Create Product
+    createProduct: builder.mutation({
+      query: (newProduct) => ({
+        url: "/products",
+        method: "POST",
+        body: newProduct,
+      }),
     }),
-  }),
+    // Update products
+    updateProduct: builder.mutation({
+      query: ({ id, ...updatedProduct }) => ({
+        url: `/products/${id}`,
+        method: "PUT",
+        body: updatedProduct,
+      }),
+    }),
+    //   Delete products
+    deleteProduct: builder.mutation({
+      query: (id) => ({
+        url: `/products/${id}`,
+        method: "DELETE",
+      }),
+    }),
 
-  // Update products (ADMIN ONLY)
-  updateProduct: builder.mutation({
-    query: ({ id, ...updatedProduct }) => ({
-      url: `/products/${id}`,
-      method: "PUT",
-      body: updatedProduct,
+    //   User-related endpoints
+    // Get all users
+    getAllUsers: builder.query({
+      query: () => "/users",
+    }),
+    // Get a specific user by ID
+    getSpecificUser: builder.query({
+      query: (userId) => `/users/${userId}`,
     }),
   }),
-
-  //   Delete products (ADMIN ONLY)
-  deleteProduct: builder.mutation({
-    query: (id) => ({
-      url: `/products/${id}`,
-      method: "DELETE",
-    }),
-  }),
-}),
 });
 
 export const {
   useCreateProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
+  useGetAllUsersQuery,
+  useGetSpecificUserQuery,
 } = adminApi;
