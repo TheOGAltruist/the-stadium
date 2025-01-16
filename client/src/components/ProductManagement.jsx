@@ -32,6 +32,7 @@ import {
   useCreateNewCategoryMutation,
   useDeleteCategoryMutation,
 } from "../redux/admin/adminApi";
+import { useNavigate } from "react-router-dom";
 
 const ProductManagement = () => {
   // Initialize the Product-related mutations and query
@@ -60,6 +61,7 @@ const ProductManagement = () => {
   const [newCategory, setNewCategory] = useState("");
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -278,14 +280,24 @@ const ProductManagement = () => {
         </Alert>
       )}
 
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ mb: 2 }}
-        onClick={() => setShowProductForm(!showProductForm)}
-      >
-        {showProductForm ? "Hide Form" : "Add Product"}
-      </Button>
+      <Box sx={{ mb: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mr: 2 }}
+          onClick={() => setShowProductForm(!showProductForm)}
+        >
+          {showProductForm ? "Hide Form" : "Add Product"}
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          sx={{ mr: 2 }}
+          onClick={() => navigate("/admin")}
+        >
+          Back to Dashboard
+        </Button>
+      </Box>
 
       {showProductForm && (
         <Box
