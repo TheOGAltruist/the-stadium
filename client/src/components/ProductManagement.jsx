@@ -15,7 +15,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Chip,
 } from "@mui/material";
 import {
   Upload as UploadIcon,
@@ -421,12 +420,20 @@ const ProductManagement = () => {
               </Button>
               <Box sx={{ mt: 2 }}>
                 {productData.tags.map((tag) => (
-                  <Chip
-                    key={tag.id || tag}
-                    label={typeof tag === "string" ? tag : tag.name}
-                    onDelete={() => handleDeleteTag(tag)}
-                    sx={{ mr: 1, mb: 1 }}
-                  />
+                  <span
+                    key={typeof tag === "string" ? tag : tag.id}
+                    style={{
+                      display: "inline-block",
+                      padding: "4px 8px",
+                      margin: "4px",
+                      backgroundColor: "#e0e0e0",
+                      borderRadius: "16px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleDeleteTag(tag)}
+                  >
+                    {typeof tag === "string" ? tag : tag.name} &times;
+                  </span>
                 ))}
               </Box>
             </Grid>
@@ -449,14 +456,21 @@ const ProductManagement = () => {
               </Button>
               <Box sx={{ mt: 2 }}>
                 {productData.categories.map((category) => (
-                  <Chip
-                    key={category.id || category}
-                    label={
-                      typeof category === "string" ? category : category.name
-                    }
-                    onDelete={() => handleDeleteCategory(category)}
-                    sx={{ mr: 1, mb: 1 }}
-                  />
+                  <span
+                    key={typeof category === "string" ? category : category.id}
+                    style={{
+                      display: "inline-block",
+                      padding: "4px 8px",
+                      margin: "4px",
+                      backgroundColor: "#e0e0e0",
+                      borderRadius: "16px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleDeleteCategory(category)}
+                  >
+                    {typeof category === "string" ? category : category.name}{" "}
+                    &times;
+                  </span>
                 ))}
               </Box>
             </Grid>
@@ -526,17 +540,35 @@ const ProductManagement = () => {
                   <TableCell>${product.price}</TableCell>
                   <TableCell>{product.quantity}</TableCell>
                   <TableCell>
-                    {product.tags.map((tag) => (
-                      <Chip key={tag} label={tag} sx={{ mr: 1, mb: 1 }} />
+                    {product.tags.map((tag, index) => (
+                      <span
+                        key={tag.id || index}
+                        style={{
+                          display: "inline-block",
+                          padding: "2px 6px",
+                          margin: "2px",
+                          backgroundColor: "#e0e0e0",
+                          borderRadius: "12px",
+                        }}
+                      >
+                        {tag.name}
+                      </span>
                     ))}
                   </TableCell>
                   <TableCell>
-                    {product.categories.map((category) => (
-                      <Chip
-                        key={category}
-                        label={category}
-                        sx={{ mr: 1, mb: 1 }}
-                      />
+                    {product.categories.map((category, index) => (
+                      <span
+                        key={category.id || index}
+                        style={{
+                          display: "inline-block",
+                          padding: "2px 6px",
+                          margin: "2px",
+                          backgroundColor: "#e0e0e0",
+                          borderRadius: "12px",
+                        }}
+                      >
+                        {category.name}
+                      </span>
                     ))}
                   </TableCell>
                   <TableCell>
