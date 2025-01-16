@@ -75,6 +75,24 @@ export const adminApi = rootApi.injectEndpoints({
         method: "DELETE",
       }),
     }),
+
+    // ***CATEGORY-RELATED ENDPOINTS***
+    // Create a new category
+    createNewCategory: builder.mutation({
+        query: (newCategory) => ({
+            url: '/categories',
+            method: 'POST',
+            body: newCategory,
+        }),
+    }),
+    // Delete/remove category
+    deleteCategory: builder.mutation({
+        query: (categoryId) => ({
+            url: `/categories/${categoryId}`,
+            method: 'DELETE',
+        }),
+    }),
+
   }),
 });
 
@@ -89,4 +107,6 @@ export const {
   useChangeOrderStatusMutation,
   useCreateNewTagMutation,
   useDeleteTagMutation,
+  useCreateNewCategoryMutation,
+  useDeleteCategoryMutation,
 } = adminApi;
