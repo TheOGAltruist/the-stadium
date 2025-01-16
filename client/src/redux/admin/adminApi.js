@@ -6,7 +6,7 @@ export const adminApi = rootApi.injectEndpoints({
     // Create Product
     createProduct: builder.mutation({
       query: (newProduct) => ({
-        url: "/products",
+        url: "/admin/products",
         method: "POST",
         body: newProduct,
       }),
@@ -14,7 +14,7 @@ export const adminApi = rootApi.injectEndpoints({
     // Update products
     updateProduct: builder.mutation({
       query: ({ id, ...updatedProduct }) => ({
-        url: `/products/${id}`,
+        url: `/admin/products/${id}`,
         method: "PATCH",
         body: updatedProduct,
       }),
@@ -22,7 +22,7 @@ export const adminApi = rootApi.injectEndpoints({
     //   Delete products
     deleteProduct: builder.mutation({
       query: (id) => ({
-        url: `/products/${id}`,
+        url: `/admin/products/${id}`,
         method: "DELETE",
       }),
     }),
@@ -30,16 +30,16 @@ export const adminApi = rootApi.injectEndpoints({
     //   ***USER-RELATED ENDPOINTS***
     // Get all users
     getAllUsers: builder.query({
-      query: () => "/users",
+      query: () => "/admin/users",
     }),
     // Get a specific user by ID
     getSpecificUser: builder.query({
-      query: (userId) => `/users/${userId}`,
+      query: (userId) => `/admin/users/${userId}`,
     }),
     // Modify user by ID
     modifySpecificUser: builder.mutation({
       query: ({ userId, ...patch }) => ({
-        url: `/users/${userId}`,
+        url: `/admin/users/${userId}`,
         method: "PATCH",
         body: patch,
       }),
@@ -48,12 +48,12 @@ export const adminApi = rootApi.injectEndpoints({
     // ***ORDER-RELATED ENDPOINTS***
     // Get all orders
     getAllOrders: builder.query({
-      query: () => "/orders",
+      query: () => "/admin/orders",
     }),
     // Change Order Status
     changeOrderStatus: builder.mutation({
       query: ({ orderId, ...patch }) => ({
-        url: `/orders/${orderId}`,
+        url: `/admin/orders/${orderId}`,
         method: "PATCH",
         body: patch,
       }),
@@ -63,7 +63,7 @@ export const adminApi = rootApi.injectEndpoints({
     // Create a new tag
     createNewTag: builder.mutation({
       query: (newTag) => ({
-        url: "/tags",
+        url: "/admin/tags",
         method: "POST",
         body: newTag,
       }),
@@ -71,7 +71,7 @@ export const adminApi = rootApi.injectEndpoints({
     // Delete/Remove a tag
     deleteTag: builder.mutation({
       query: (tagId) => ({
-        url: `/tags/${tagId}`,
+        url: `/admin/tags/${tagId}`,
         method: "DELETE",
       }),
     }),
@@ -80,7 +80,7 @@ export const adminApi = rootApi.injectEndpoints({
     // Create a new category
     createNewCategory: builder.mutation({
       query: (newCategory) => ({
-        url: "/categories",
+        url: "/admin/categories",
         method: "POST",
         body: newCategory,
       }),
@@ -88,7 +88,7 @@ export const adminApi = rootApi.injectEndpoints({
     // Delete/remove category
     deleteCategory: builder.mutation({
       query: (categoryId) => ({
-        url: `/categories/${categoryId}`,
+        url: `/admin/categories/${categoryId}`,
         method: "DELETE",
       }),
     }),
@@ -96,7 +96,7 @@ export const adminApi = rootApi.injectEndpoints({
     // ***WISHLIST-RELATED ENDPOINTS***
     // Get all wishlists
     getAllWishlists: builder.query({
-      query: () => "/wishlists",
+      query: () => "/admin/wishlists",
     }),
   }),
 });
