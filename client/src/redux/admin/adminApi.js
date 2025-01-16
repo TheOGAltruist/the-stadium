@@ -66,10 +66,10 @@ export const adminApi = rootApi.injectEndpoints({
     // ***TAG-RELATED ENDPOINTS***
     // Create a new tag
     createNewTag: builder.mutation({
-      query: (newTag) => ({
+      query: ({ name, productId }) => ({
         url: "/admin/tags",
         method: "POST",
-        body: newTag,
+        body: { name, productId },
       }),
     }),
     // Delete/Remove a tag
@@ -83,10 +83,10 @@ export const adminApi = rootApi.injectEndpoints({
     // ***CATEGORY-RELATED ENDPOINTS***
     // Create a new category
     createNewCategory: builder.mutation({
-      query: (newCategory) => ({
+      query: ({ name, productId }) => ({
         url: "/admin/categories",
         method: "POST",
-        body: newCategory,
+        body: { name, productId },
       }),
     }),
     // Delete/remove category

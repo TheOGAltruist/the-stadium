@@ -15,6 +15,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Chip,
 } from "@mui/material";
 import {
   Upload as UploadIcon,
@@ -27,6 +28,10 @@ import {
   useDeleteProductMutation,
   useUpdateProductMutation,
   useGetAllProductsQuery,
+  useCreateNewTagMutation,
+  useDeleteTagMutation,
+  useCreateNewCategoryMutation,
+  useDeleteCategoryMutation,
 } from "../redux/admin/adminApi";
 
 const ProductManagement = () => {
@@ -35,6 +40,11 @@ const ProductManagement = () => {
   const [createProduct] = useCreateProductMutation();
   const [updateProduct] = useUpdateProductMutation();
   const [deleteProduct] = useDeleteProductMutation();
+  const [createNewTag] = useCreateNewTagMutation();
+  const [deleteTag] = useDeleteTagMutation();
+  const [createNewCategory] = useCreateNewCategoryMutation();
+  const [deleteCategory] = useDeleteCategoryMutation();
+
   const [showProductForm, setShowProductForm] = useState(false);
   const [productData, setProductData] = useState({
     id: null,
@@ -44,9 +54,11 @@ const ProductManagement = () => {
     quantity: "",
     imageUrl: "",
     imageFile: null,
-    tags: "",
-    categories: "",
+    tags: [], //I'm going to map over this array
+    categories: [], //I'm going to map over this array
   });
+  const [newTag, setNewTag] = useState("");
+  const [newCategory, setNewCategory] = useState("");
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -67,14 +79,14 @@ const ProductManagement = () => {
   };
 
   const formatInput = (input) => {
-    return input
-      .split(",")
-      .map(
-        (item) =>
-          item.trim().charAt(0).toUpperCase() +
-          item.trim().slice(1).toLowerCase()
-      )
-      .join(", ");
+    if (!Array.isArray(input)) {
+      console.error("Expected an array, but received:", input);
+      return [];
+    }
+    return input.map(
+      (item) =>
+        item.trim().charAt(0).toUpperCase() + item.trim().slice(1).toLowerCase()
+    );
   };
 
   const validateForm = () => {
@@ -143,11 +155,13 @@ const ProductManagement = () => {
         quantity: "",
         imageUrl: "",
         imageFile: null,
-        tags: "",
-        categories: "",
+        tags: [],
+        categories: [],
       });
     } catch (error) {
       console.error("Failed to add/update product", error);
+      const message = error.data?.message || "Failed to process the request";
+      setErrors({ apiError: message });
     }
 
     // Clears success message after 3 seconds
@@ -169,8 +183,82 @@ const ProductManagement = () => {
   };
 
   const handleEditProduct = (product) => {
-    setProductData(product);
+    setProductData({
+      ...product,
+      tags: product.tags || [],
+      categories: product.categories || [],
+    });
     setShowProductForm(true);
+  };
+
+  //   Handle new tag creation
+  const handleAddTag = async () => {
+    if (newTag && !productData.tags.includes(newTag)) {
+      try {
+        // Call createNewTag mutation
+        await createNewTag({
+          name: newTag,
+          productId: productData.id,
+        }).unwrap();
+        setProductData((prevState) => ({
+          ...prevState,
+          tags: [...prevState.tags, newTag],
+        }));
+        setNewTag("");
+      } catch (error) {
+        console.error("Failed to add tag", error);
+      }
+    }
+  };
+
+  //   Handle tag deletion
+  const handleDeleteTag = async (tagToDelete) => {
+    try {
+      // Call deleteTag mutation
+      await deleteTag(tagToDelete).unwrap();
+      setProductData((prevState) => ({
+        ...prevState,
+        tags: prevState.tags.filter((tag) => tag !== tagToDelete),
+      }));
+    } catch (error) {
+      console.error("Failed to delete tag", error);
+    }
+  };
+
+  //   Handle new category creation
+  const handleAddCategory = async () => {
+    if (newCategory && !productData.categories.includes(newCategory)) {
+      try {
+        // Call createNewCategory mutation
+        await createNewCategory({
+          name: newCategory,
+          productId: productData.id,
+        }).unwrap();
+        setProductData((prevState) => ({
+          ...prevState,
+          categories: [...prevState.categories, newCategory],
+        }));
+        setNewCategory("");
+      } catch (error) {
+        console.error("Failed to add category", error);
+      }
+    }
+  };
+
+  //   Handle category deletion
+  const handleDeleteCategory = async (categoryToDelete) => {
+    try {
+      // Call deleteCategory mutation
+      await deleteCategory(categoryToDelete).unwrap();
+      setProductData((prevState) => ({
+        ...prevState,
+        categories: prevState.categories.filter(
+          (category) => category !== categoryToDelete
+        ),
+      }));
+    } catch (error) {
+      console.error("Failed to remove category", error);
+    }
   };
 
   return (
@@ -182,6 +270,12 @@ const ProductManagement = () => {
       {successMessage && (
         <Alert severity="success" sx={{ mb: 2 }}>
           {successMessage}
+        </Alert>
+      )}
+
+      {errors.apiError && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {errors.apiError}
         </Alert>
       )}
 
@@ -310,25 +404,61 @@ const ProductManagement = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="Tags (comma-separated)"
-                name="tags"
-                value={productData.tags}
-                onChange={handleInputChange}
+                label="New Tag"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
                 fullWidth
                 variant="outlined"
-                placeholder="e.g., sports, outdoor, basketball"
+                placeholder="Add a new tag"
               />
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ mt: 1 }}
+                onClick={handleAddTag}
+              >
+                Add Tag
+              </Button>
+              <Box sx={{ mt: 2 }}>
+                {productData.tags.map((tag) => (
+                  <Chip
+                    key={tag.id || tag}
+                    label={typeof tag === "string" ? tag : tag.name}
+                    onDelete={() => handleDeleteTag(tag)}
+                    sx={{ mr: 1, mb: 1 }}
+                  />
+                ))}
+              </Box>
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="Categories (comma-separated)"
-                name="categories"
-                value={productData.categories}
-                onChange={handleInputChange}
+                label="New Category"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
                 fullWidth
                 variant="outlined"
-                placeholder="e.g., Equipment, Basketball"
+                placeholder="Add a new category"
               />
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ mt: 1 }}
+                onClick={handleAddCategory}
+              >
+                Add Category
+              </Button>
+              <Box sx={{ mt: 2 }}>
+                {productData.categories.map((category) => (
+                  <Chip
+                    key={category.id || category}
+                    label={
+                      typeof category === "string" ? category : category.name
+                    }
+                    onDelete={() => handleDeleteCategory(category)}
+                    sx={{ mr: 1, mb: 1 }}
+                  />
+                ))}
+              </Box>
             </Grid>
             <Grid
               item
@@ -371,19 +501,21 @@ const ProductManagement = () => {
               <TableCell>Name</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>Quantity</TableCell>
+              <TableCell>Tags</TableCell>
+              <TableCell>Categories</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={4} align="center">
+                <TableCell colSpan={6} align="center">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : error ? (
               <TableRow>
-                <TableCell colSpan={4} align="center">
+                <TableCell colSpan={6} align="center">
                   Error loading products
                 </TableCell>
               </TableRow>
@@ -393,6 +525,20 @@ const ProductManagement = () => {
                   <TableCell>{product.name}</TableCell>
                   <TableCell>${product.price}</TableCell>
                   <TableCell>{product.quantity}</TableCell>
+                  <TableCell>
+                    {product.tags.map((tag) => (
+                      <Chip key={tag} label={tag} sx={{ mr: 1, mb: 1 }} />
+                    ))}
+                  </TableCell>
+                  <TableCell>
+                    {product.categories.map((category) => (
+                      <Chip
+                        key={category}
+                        label={category}
+                        sx={{ mr: 1, mb: 1 }}
+                      />
+                    ))}
+                  </TableCell>
                   <TableCell>
                     <IconButton
                       color="primary"
