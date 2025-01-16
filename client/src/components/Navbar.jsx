@@ -1,3 +1,4 @@
+import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
@@ -5,8 +6,11 @@ import InfoIcon from "@mui/icons-material/Info";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import { useSelector } from "react-redux"; // Import useSelector to access Redux state
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
+  // Access the authentication state from Redux
+  const user = useSelector((state) => state.auth.user);
   // debugging isAdmin panel to show
   console.log("User Object", user);
 
@@ -69,14 +73,25 @@ const Navbar = ({ user }) => {
             >
               Cart
             </Button>
-            <Button
-              color="inherit"
-              component={Link}
-              to="/account"
-              startIcon={<AccountCircleIcon />}
-            >
-              Account
-            </Button>
+            {user ? (
+              <Button
+                color="inherit"
+                component={Link}
+                to="/userhome"
+                startIcon={<AccountCircleIcon />}
+              >
+                Account
+              </Button>
+            ) : (
+              <Button
+                color="inherit"
+                component={Link}
+                to="/account"
+                startIcon={<AccountCircleIcon />}
+              >
+                Login/Register
+              </Button>
+            )}
             {user?.isAdmin && (
               <Button
                 color="inherit"
