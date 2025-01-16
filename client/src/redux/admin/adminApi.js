@@ -62,14 +62,19 @@ export const adminApi = rootApi.injectEndpoints({
     // ***TAG-RELATED ENDPOINTS***
     // Create a new tag
     createNewTag: builder.mutation({
-        query: (newTag) => ({
-            url: '/tags',
-            method: 'POST',
-            body: newTag,
-        }),
+      query: (newTag) => ({
+        url: "/tags",
+        method: "POST",
+        body: newTag,
+      }),
     }),
-    
-
+    // Delete/Remove a tag
+    deleteTag: builder.mutation({
+      query: (tagId) => ({
+        url: `/tags/${tagId}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -82,4 +87,6 @@ export const {
   useModifySpecificUserMutation,
   useGetAllOrdersQuery,
   useChangeOrderStatusMutation,
+  useCreateNewTagMutation,
+  useDeleteTagMutation,
 } = adminApi;
