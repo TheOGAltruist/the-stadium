@@ -20,65 +20,78 @@ import {
   DialogActions,
   Snackbar,
 } from "@mui/material";
+import {
+  useGetAllProductsQuery,
+  useGetProductByIdQuery,
+} from "../redux/products/productsApi";
 
 // Mock product data
-const mockProducts = [
-  {
-    id: "1",
-    name: "Basketball",
-    description:
-      "A high-quality basketball suitable for indoor and outdoor play.",
-    price: 29.99,
-    quantity: 50,
-    skuId: "BB123",
-    image: "https://via.placeholder.com/150",
-    tags: ["sports", "indoor", "outdoor"],
-    categories: ["Equipment", "Basketball"],
-  },
-  {
-    id: "2",
-    name: "Soccer Ball",
-    description: "Durable soccer ball designed for all weather conditions.",
-    price: 19.99,
-    quantity: 100,
-    skuId: "SB456",
-    image: "https://via.placeholder.com/150",
-    tags: ["sports", "outdoor"],
-    categories: ["Equipment", "Soccer"],
-  },
-  {
-    id: "3",
-    name: "Running Shoes",
-    description: "Comfortable running shoes with excellent grip and support.",
-    price: 59.99,
-    quantity: 30,
-    skuId: "RS789",
-    image: "https://via.placeholder.com/150",
-    tags: ["footwear", "running"],
-    categories: ["Shoes", "Running"],
-  },
-  {
-    id: "4",
-    name: "Tennis Racket",
-    description: "Lightweight tennis racket for players of all skill levels.",
-    price: 79.99,
-    quantity: 20,
-    skuId: "TR101",
-    image: "https://via.placeholder.com/150",
-    tags: ["sports", "tennis"],
-    categories: ["Equipment", "Tennis"],
-  },
-];
+// const mockProducts = [
+//   {
+//     id: "1",
+//     name: "Basketball",
+//     description:
+//       "A high-quality basketball suitable for indoor and outdoor play.",
+//     price: 29.99,
+//     quantity: 50,
+//     skuId: "BB123",
+//     image: "https://via.placeholder.com/150",
+//     tags: ["sports", "indoor", "outdoor"],
+//     categories: ["Equipment", "Basketball"],
+//   },
+//   {
+//     id: "2",
+//     name: "Soccer Ball",
+//     description: "Durable soccer ball designed for all weather conditions.",
+//     price: 19.99,
+//     quantity: 100,
+//     skuId: "SB456",
+//     image: "https://via.placeholder.com/150",
+//     tags: ["sports", "outdoor"],
+//     categories: ["Equipment", "Soccer"],
+//   },
+//   {
+//     id: "3",
+//     name: "Running Shoes",
+//     description: "Comfortable running shoes with excellent grip and support.",
+//     price: 59.99,
+//     quantity: 30,
+//     skuId: "RS789",
+//     image: "https://via.placeholder.com/150",
+//     tags: ["footwear", "running"],
+//     categories: ["Shoes", "Running"],
+//   },
+//   {
+//     id: "4",
+//     name: "Tennis Racket",
+//     description: "Lightweight tennis racket for players of all skill levels.",
+//     price: 79.99,
+//     quantity: 20,
+//     skuId: "TR101",
+//     image: "https://via.placeholder.com/150",
+//     tags: ["sports", "tennis"],
+//     categories: ["Equipment", "Tennis"],
+//   },
+// ];
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({ tag: "", category: "" });
   const [sortBy, setSortBy] = useState("low"); // Default sort: low to high price
-  const [products, setProducts] = useState(mockProducts);
+  // const [products, setProducts] = useState(mockProducts);
   const [open, setOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  // RTK query fetch all products
+  const { data: products = [], isLoading, error } = useGetAllProductsQuery();
+
+  // RTK Query fetch product details
+  const { data: selectedProduct } = useGetProductByIdQuery(selectedProductId, {
+    // skip the whole query if no product is selected
+    skip: !selectedProductId,
+  });
 
   // Handle search query change
   const handleSearch = (e) => {
@@ -96,15 +109,15 @@ const Home = () => {
   };
 
   // Open product details modal
-  const handleViewDetails = (product) => {
-    setSelectedProduct(product);
+  const handleViewDetails = (productId) => {
+    setSelectedProductId(productId);
     setOpen(true);
   };
 
   // Close modal
   const handleClose = () => {
     setOpen(false);
-    setSelectedProduct(null);
+    setSelectedProductId(null);
   };
 
   // Show snackbar
@@ -200,45 +213,51 @@ const Home = () => {
 
       {/* Product Grid */}
       <Grid container spacing={3}>
-        {filteredProducts.map((product) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
-            <Card>
-              <CardMedia
-                component="img"
-                height="150"
-                image={product.image}
-                alt={product.name}
-              />
-              <CardContent>
-                <Typography variant="h6">{product.name}</Typography>
-                <Typography variant="body2">
-                  ${product.price.toFixed(2)}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>In Stock:</strong> {product.quantity}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleViewDetails(product)}
-                >
-                  View Details
-                </Button>
-                <Button
-                  size="small"
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleAddToCart(product.name)}
-                >
-                  Add to Cart
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
+        {isLoading ? (
+          <Typography>Loading...</Typography>
+        ) : error ? (
+          <Typography>Error loading products</Typography>
+        ) : (
+          filteredProducts.map((product) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
+              <Card>
+                <CardMedia
+                  component="img"
+                  height="150"
+                  image={product.image}
+                  alt={product.name}
+                />
+                <CardContent>
+                  <Typography variant="h6">{product.name}</Typography>
+                  <Typography variant="body2">
+                    ${Number(product.price).toFixed(2)}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>In Stock:</strong> {product.quantity}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleViewDetails(product.id)}
+                  >
+                    View Details
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleAddToCart(product.name)}
+                  >
+                    Add to Cart
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))
+        )}
       </Grid>
 
       {/* Product Details Modal */}
@@ -255,7 +274,8 @@ const Home = () => {
             />
             <DialogContentText>{selectedProduct.description}</DialogContentText>
             <Typography variant="body2" sx={{ marginTop: "10px" }}>
-              <strong>Price:</strong> ${selectedProduct.price.toFixed(2)}
+              <strong>Price:</strong> $
+              {Number(selectedProduct.price).toFixed(2)}
             </Typography>
             <Typography variant="body2">
               <strong>SKU:</strong> {selectedProduct.skuId}

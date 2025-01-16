@@ -9,7 +9,8 @@ export const rootApi = createApi({
       // Get the token from cookies saved from backend
       headers.set("Content-type", "application/json");
     },
-    // credentials: "include",
+    // need to set this to "include" for cookies to work
+    credentials: "include",
   }),
   endpoints: (builder) => ({}),
 });

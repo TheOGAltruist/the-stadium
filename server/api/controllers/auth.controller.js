@@ -57,6 +57,7 @@ const login = async (req, res, next) => {
           .cookie("token", `Bearer ${token}`, {
             httpOnly: true,
             sameSite: "strict",
+            secure: process.env.NODE_ENV,
             expires: new Date(Date.now() + 3600000),
           })
           .json({
@@ -116,6 +117,7 @@ const register = async (req, res, next) => {
         .cookie("token", `Bearer ${token}`, {
           httpOnly: true,
           sameSite: "strict",
+          secure: process.env.NODE_ENV,
           expires: new Date(Date.now() + 3600000),
         })
         .json({
