@@ -15,7 +15,7 @@ export const adminApi = rootApi.injectEndpoints({
     updateProduct: builder.mutation({
       query: ({ id, ...updatedProduct }) => ({
         url: `/products/${id}`,
-        method: "PUT",
+        method: "PATCH",
         body: updatedProduct,
       }),
     }),
@@ -36,6 +36,7 @@ export const adminApi = rootApi.injectEndpoints({
     getSpecificUser: builder.query({
       query: (userId) => `/users/${userId}`,
     }),
+    // Modify user by ID
     modifySpecificUser: builder.mutation({
       query: ({ userId, ...patch }) => ({
         url: `/users/${userId}`,
@@ -44,7 +45,12 @@ export const adminApi = rootApi.injectEndpoints({
       }),
     }),
 
-
+    // Order-related endpoints
+    // Get all orders
+    getAllOrders: builder.query({
+        query: () => '/orders',
+    }),
+    
   }),
 });
 
