@@ -48,9 +48,17 @@ export const adminApi = rootApi.injectEndpoints({
     // Order-related endpoints
     // Get all orders
     getAllOrders: builder.query({
-        query: () => '/orders',
+      query: () => "/orders",
     }),
-    
+    changeOrderStatus: builder.mutation({
+      query: ({ orderId, ...patch }) => ({
+        url: `/orders/${orderId}`,
+        method: "PATCH",
+        body: patch,
+      }),
+    }),
+
+
   }),
 });
 
@@ -61,4 +69,6 @@ export const {
   useGetAllUsersQuery,
   useGetSpecificUserQuery,
   useModifySpecificUserMutation,
+  useGetAllOrdersQuery,
+  useChangeOrderStatusMutation,
 } = adminApi;
