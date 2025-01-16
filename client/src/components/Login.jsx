@@ -21,10 +21,23 @@ const Login = () => {
   const [loginInput, setLoginInput] = useState("");
   // Tracks password
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
   // integrating RTK Query for calling api/auth/login
   const [loginUser, { isLoading, isError, error }] = useLoginUserMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!loginInput) {
+      newErrors.loginInput = "Email or username is requried.";
+    }
+    if (!password) {
+      newErrors.password = "Password is required.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -81,6 +94,8 @@ const Login = () => {
               required
               fullWidth
               variant="outlined"
+              error={!!errors.loginInput} //form validation errors
+              helperText={errors.loginInput} //form validation errors
             />
 
             {/* Password Input */}
@@ -92,6 +107,8 @@ const Login = () => {
               required
               fullWidth
               variant="outlined"
+              error={!!errors.password} //form validation errors
+              helperText={errors.password} //form validation errors
             />
 
             {/* Submit Button */}
@@ -103,7 +120,7 @@ const Login = () => {
               disabled={isLoading}
             >
               {/* Andrew: I changed this as well */}
-              {isLoading ? "Logging in..." : "Login"} 
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
             {isError && (
               <Typography color="error" variant="body2" textAlign="center">
