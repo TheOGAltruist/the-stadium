@@ -124,11 +124,10 @@ const register = async (req, res, next) => {
           user: rest,
         });
     } catch {
-      const error = new Error(
-        "Registration successful. Unable to sign-in at the moment. Please try after some time with the newly registered account!"
-      );
-      error.statusCode = 500;
-      throw error;
+      res.json({
+        statusCode: 500,
+        message: "Registration successful. Unable to sign-in at the moment. Please try after some time with the newly registered account!"
+      })
     }
   } catch (error) {
     next({
@@ -184,11 +183,10 @@ const oauthRegister = async (req, res, next) => {
           user: rest,
         });
     } catch {
-      const error = new Error(
-        "Registration successful. Unable to sign-in at the moment. Please try after some time with the newly registered account!"
-      );
-      error.statusCode = 500;
-      throw error;
+      res.json({
+        statusCode: 500,
+        message: "Registration successful. Unable to sign-in at the moment. Please try after some time with the newly registered account!"
+      })
     }
   } catch (error) {}
 };
