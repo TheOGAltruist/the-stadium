@@ -23,7 +23,7 @@ const isLoggedIn = async (req, res, next) => {
 //Middleware function for admin-only routes
 const isAdmin = async (req, res, next) => {
   try {
-    const receivedToken = req.headers.authorization.split(" ")[1];
+    const receivedToken = (req.cookies['token']).split(" ")[1];
     req.user = await findUserWithToken(receivedToken);
 
     if (req.user.isAdmin === true) {
