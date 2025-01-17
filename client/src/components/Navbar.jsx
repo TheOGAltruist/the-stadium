@@ -7,6 +7,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { useSelector } from "react-redux"; // Import useSelector to access Redux state
+import Logo from "../assets/Stadium.png"; // Import the logo
 
 const Navbar = () => {
   // Access the authentication state from Redux
@@ -22,6 +23,7 @@ const Navbar = () => {
           marginBottom: "20px",
           left: 0,
           top: 0,
+          backgroundColor: "#8D0801",
         }}
       >
         <Toolbar
@@ -30,14 +32,40 @@ const Navbar = () => {
             justifyContent: "space-between",
           }}
         >
-          {/* Title */}
-          <Typography
-            position="static"
-            variant="h4"
-            sx={{ flexGrow: 1, textAlign: "left" }}
+          {/* Logo and Title */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1, // Space between logo and text
+            }}
           >
-            The Stadium
-          </Typography>
+            {/* Logo */}
+            <Box
+              component="img"
+              src={Logo}
+              alt="The Stadium Logo"
+              sx={{
+                height: "100px",
+                width: "100px",
+                objectFit: "contain",
+                backgroundColor: "transparent",
+                backgroundColor: "#708D81",
+                padding: "6px",
+                paddingX: "20px",
+                marginLeft: "-25px",
+              }}
+            />
+            {/* Title */}
+            <Typography
+              position="static"
+              variant="h1"
+              sx={{ textAlign: "left" }}
+              color="#edebeb"
+            >
+              The Stadium
+            </Typography>
+          </Box>
 
           <br />
 
@@ -50,6 +78,7 @@ const Navbar = () => {
             }}
           >
             <Button
+              className="navButton"
               color="inherit"
               component={Link}
               to="/"
@@ -58,6 +87,7 @@ const Navbar = () => {
               Home
             </Button>
             <Button
+              className="navButton"
               color="inherit"
               component={Link}
               to="/about"
@@ -66,6 +96,7 @@ const Navbar = () => {
               About
             </Button>
             <Button
+              className="navButton"
               color="inherit"
               component={Link}
               to="/checkout"
@@ -75,6 +106,7 @@ const Navbar = () => {
             </Button>
             {user ? (
               <Button
+                className="navButton"
                 color="inherit"
                 component={Link}
                 to="/userhome"
@@ -84,6 +116,7 @@ const Navbar = () => {
               </Button>
             ) : (
               <Button
+                className="navButton"
                 color="inherit"
                 component={Link}
                 to="/account"
@@ -94,6 +127,7 @@ const Navbar = () => {
             )}
             {user?.isAdmin && (
               <Button
+                className="navButton"
                 color="inherit"
                 component={Link}
                 to="/admin"

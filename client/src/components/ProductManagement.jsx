@@ -15,6 +15,10 @@ import {
   TableHead,
   TableRow,
   Paper,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import {
   Upload as UploadIcon,
@@ -46,6 +50,8 @@ const ProductManagement = () => {
   const [deleteCategory] = useDeleteCategoryMutation();
 
   const [showProductForm, setShowProductForm] = useState(false);
+  const [showTagCategoryForm, setShowTagCategoryForm] = useState(false); // removed from product form and creating separate form
+  const [isEditMode, setIsEditMode] = useState(false); // New state for edit mode
   const [productData, setProductData] = useState({
     id: null,
     name: "",
@@ -54,6 +60,7 @@ const ProductManagement = () => {
     quantity: "",
     imageUrl: "",
     imageFile: null,
+    skuId: "", // added skuId to match db schema
     tags: [], //I'm going to map over this array
     categories: [], //I'm going to map over this array
   });
@@ -77,6 +84,16 @@ const ProductManagement = () => {
       ...prevState,
       imageFile: file,
     }));
+  };
+
+  //Validate URL input
+  const isValidUrl = (url) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (_) {
+      return false;
+    }
   };
 
   const formatInput = (input) => {
@@ -111,6 +128,11 @@ const ProductManagement = () => {
     }
     if (!productData.imageUrl && !productData.imageFile) {
       newErrors.image = "Image URL or file is missing & required!";
+    } else if (productData.imageUrl && !isValidUrl(productData.imageUrl)) {
+      newErrors.image = "Invalid image URL!";
+    }
+    if (!productData.skuId) {
+      newErrors.skuId = "SKU ID is required!";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -132,14 +154,18 @@ const ProductManagement = () => {
       image: productData.imageFile
         ? "uploaded_file_placeholder"
         : productData.imageUrl,
-      tags: formattedTags.split(", "),
-      categories: formattedCategories.split(", "),
+      skuId: productData.skuId,
+      tags: typeof formattedTags === "string" ? formattedTags.split(", ") : [],
+      categories:
+        typeof formattedCategories === "string"
+          ? formattedCategories.split(", ")
+          : [],
     };
 
     // API Calls to the backend
     try {
-      if (productData.id) {
-        // Update product if ID exists
+      // Edit Mode
+      if (isEditMode) {
         await updateProduct({ id: productData.id, ...payload }).unwrap();
         setSuccessMessage("Product successfully updated!");
       } else {
@@ -148,17 +174,18 @@ const ProductManagement = () => {
         //Display the success message and reset form
         setSuccessMessage("Product successfully added");
       }
-      setProductData({
-        id: null,
-        name: "",
-        description: "",
-        price: "",
-        quantity: "",
-        imageUrl: "",
-        imageFile: null,
-        tags: [],
-        categories: [],
-      });
+      resetForm();
+      //   setProductData({
+      //     id: null,
+      //     name: "",
+      //     description: "",
+      //     price: "",
+      //     quantity: "",
+      //     imageUrl: "",
+      //     imageFile: null,
+      //     tags: [],
+      //     categories: [],
+      //   });
     } catch (error) {
       console.error("Failed to add/update product", error);
       const message = error.data?.message || "Failed to process the request";
@@ -189,7 +216,24 @@ const ProductManagement = () => {
       tags: product.tags || [],
       categories: product.categories || [],
     });
+    setIsEditMode(true);
     setShowProductForm(true);
+  };
+
+  const resetForm = () => {
+    setProductData({
+      id: null,
+      name: "",
+      description: "",
+      price: "",
+      quantity: "",
+      imageUrl: "",
+      imageFile: null,
+      tags: [],
+      categories: [],
+    });
+    setIsEditMode(false);
+    setShowProductForm(false);
   };
 
   //   Handle new tag creation
@@ -285,7 +329,13 @@ const ProductManagement = () => {
           variant="contained"
           color="primary"
           sx={{ mr: 2 }}
-          onClick={() => setShowProductForm(!showProductForm)}
+          onClick={() => {
+            if (showProductForm) {
+              resetForm();
+            } else {
+              setShowProductForm(true);
+            }
+          }}
         >
           {showProductForm ? "Hide Form" : "Add Product"}
         </Button>
@@ -297,7 +347,107 @@ const ProductManagement = () => {
         >
           Back to Dashboard
         </Button>
+
+        <Button
+          variant="contained"
+          color="secondary"
+          sx={{ mr: 2 }}
+          onClick={() => setShowTagCategoryForm(!showTagCategoryForm)}
+        >
+          {showTagCategoryForm
+            ? "Hide Tag/Category Form"
+            : "Manage Tags/Categories"}
+        </Button>
       </Box>
+
+      {showTagCategoryForm && (
+        <Box
+          sx={{
+            mt: 4,
+            p: 3,
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            maxWidth: "600px",
+            position: "relative",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Manage Tags
+          </Typography>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12}>
+              <TextField
+                label="New Tag"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                placeholder="e.g., Sports, Indoor, Outdoor"
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button variant="contained" onClick={handleAddTag}>
+                Add Tag
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel>Tag</InputLabel>
+                <Select
+                  name="tag"
+                  value=""
+                  onChange={(e) => handleDeleteTag(e.target.value)}
+                >
+                  <MenuItem value="">Select to Delete</MenuItem>
+                  {productData.tags.map((tag) => (
+                    <MenuItem key={tag} value={tag}>
+                      {tag}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+
+          <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
+            Manage Categories
+          </Typography>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12}>
+              <TextField
+                label="New Category"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                placeholder="e.g., Equipment, Basketball, Soccer"
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button variant="contained" onClick={handleAddCategory}>
+                Add Category
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel>Category</InputLabel>
+                <Select
+                  name="category"
+                  value=""
+                  onChange={(e) => handleDeleteCategory(e.target.value)}
+                >
+                  <MenuItem value="">Select to Delete</MenuItem>
+                  {productData.categories.map((category) => (
+                    <MenuItem key={category} value={category}>
+                      {category}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </Box>
+      )}
 
       {showProductForm && (
         <Box
@@ -311,7 +461,7 @@ const ProductManagement = () => {
           }}
         >
           <Typography variant="h6" gutterBottom>
-            {productData.id ? "Edit Product" : "Add a New Product"}
+            {isEditMode ? "Edit Product" : "Add a New Product"}
           </Typography>
 
           <Grid container spacing={2}>
@@ -378,6 +528,19 @@ const ProductManagement = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                label="SKU ID"
+                name="skuId"
+                value={productData.skuId}
+                onChange={handleInputChange}
+                fullWidth
+                variant="outlined"
+                required
+                error={!!errors.skuId}
+                helperText={errors.skuId}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
                 label="Image URL"
                 name="imageUrl"
                 value={productData.imageUrl}
@@ -413,79 +576,7 @@ const ProductManagement = () => {
                 </Typography>
               )}
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="New Tag"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                fullWidth
-                variant="outlined"
-                placeholder="Add a new tag"
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ mt: 1 }}
-                onClick={handleAddTag}
-              >
-                Add Tag
-              </Button>
-              <Box sx={{ mt: 2 }}>
-                {productData.tags.map((tag) => (
-                  <span
-                    key={typeof tag === "string" ? tag : tag.id}
-                    style={{
-                      display: "inline-block",
-                      padding: "4px 8px",
-                      margin: "4px",
-                      backgroundColor: "#e0e0e0",
-                      borderRadius: "16px",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => handleDeleteTag(tag)}
-                  >
-                    {typeof tag === "string" ? tag : tag.name} &times;
-                  </span>
-                ))}
-              </Box>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="New Category"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                fullWidth
-                variant="outlined"
-                placeholder="Add a new category"
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ mt: 1 }}
-                onClick={handleAddCategory}
-              >
-                Add Category
-              </Button>
-              <Box sx={{ mt: 2 }}>
-                {productData.categories.map((category) => (
-                  <span
-                    key={typeof category === "string" ? category : category.id}
-                    style={{
-                      display: "inline-block",
-                      padding: "4px 8px",
-                      margin: "4px",
-                      backgroundColor: "#e0e0e0",
-                      borderRadius: "16px",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => handleDeleteCategory(category)}
-                  >
-                    {typeof category === "string" ? category : category.name}{" "}
-                    &times;
-                  </span>
-                ))}
-              </Box>
-            </Grid>
+
             <Grid
               item
               xs={12}
@@ -498,12 +589,12 @@ const ProductManagement = () => {
                 color="success"
                 onClick={handleProductSubmit}
               >
-                {productData.id ? "Update Product" : "Submit Product"}
+                {isEditMode ? "Update Product" : "Submit Product"}
               </Button>
             </Grid>
           </Grid>
           <IconButton
-            onClick={() => setShowProductForm(false)}
+            onClick={() => resetForm()}
             sx={{
               position: "absolute",
               bottom: 16,
@@ -527,9 +618,9 @@ const ProductManagement = () => {
               <TableCell>Name</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>Quantity</TableCell>
+              <TableCell>Sku ID</TableCell>
               <TableCell>Tags</TableCell>
               <TableCell>Categories</TableCell>
-              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -551,6 +642,7 @@ const ProductManagement = () => {
                   <TableCell>{product.name}</TableCell>
                   <TableCell>${product.price}</TableCell>
                   <TableCell>{product.quantity}</TableCell>
+                  <TableCell>{product.skuId}</TableCell>
                   <TableCell>
                     {product.tags.map((tag, index) => (
                       <span
