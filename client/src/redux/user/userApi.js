@@ -66,7 +66,36 @@ export const userApi = rootApi.injectEndpoints({
       }),
     }),
 
-    
+    // PAYMENT-related endpoints
+    // Get payment methods
+    getPaymentMethods: builder.query({
+      query: () => "/payments",
+    }),
+    // Add payment method
+    addPaymentMethod: builder.mutation({
+      query: (paymentMethodData) => ({
+        url: "/payments",
+        method: "POST",
+        body: paymentMethodData,
+      }),
+    }),
+    // Add payment method details
+    addPaymentMethodDetails: builder.mutation({
+      query: ({ paymentMethodId, details }) => ({
+        url: `/payments/${paymentMethodId}`,
+        method: "POST",
+        body: details,
+      }),
+    }),
+    // Delete payment method
+    deletePaymentMethod: builder.mutation({
+      query: (paymentMethodId) => ({
+        url: `/payments/${paymentMethodId}`,
+        method: "DELETE",
+      }),
+    }),
+
+
   }),
 });
 
