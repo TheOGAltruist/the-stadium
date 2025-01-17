@@ -20,25 +20,25 @@ export const userApi = rootApi.injectEndpoints({
     // Create a new order
     newOrder: builder.mutation({
       query: (orderData) => ({
-        url: "/orders",
+        url: "/me/orders",
         method: "POST",
         body: orderData,
       }),
     }),
     // Fetch orders
     myOrders: builder.query({
-      query: () => "/orders",
+      query: () => "/me/orders",
     }),
 
     // CART-RELATED endpoints
     // Fetch cart
     myCartItems: builder.query({
-      query: () => "/cart",
+      query: () => "/me/cart",
     }),
     // Add cart item
     addCartItem: builder.mutation({
       query: ({ productId, quantity }) => ({
-        url: `/cart/${productId}`,
+        url: `/me/cart/${productId}`,
         method: "POST",
         body: { quantity },
       }),
@@ -46,14 +46,14 @@ export const userApi = rootApi.injectEndpoints({
     // Remove cart item
     removeCartItem: builder.mutation({
       query: (cartItemId) => ({
-        url: `/cart/${cartItemId}`,
+        url: `/me/cart/${cartItemId}`,
         method: "DELETE",
       }),
     }),
     // Update cart item
     updateCartItem: builder.mutation({
       query: ({ cartItemId, quantity }) => ({
-        url: `/cart/${cartItemId}`,
+        url: `/me/cart/${cartItemId}`,
         method: "PATCH",
         body: { quantity },
       }),
@@ -61,7 +61,7 @@ export const userApi = rootApi.injectEndpoints({
     // Delete cart
     deleteCart: builder.mutation({
       query: () => ({
-        url: "/cart",
+        url: "/me/cart",
         method: "DELETE",
       }),
     }),
@@ -69,12 +69,12 @@ export const userApi = rootApi.injectEndpoints({
     // PAYMENT-related endpoints
     // Get payment methods
     getPaymentMethods: builder.query({
-      query: () => "/payments",
+      query: () => "/me/payments",
     }),
     // Add payment method
     addPaymentMethod: builder.mutation({
       query: (paymentMethodData) => ({
-        url: "/payments",
+        url: "/me/payments",
         method: "POST",
         body: paymentMethodData,
       }),
@@ -82,7 +82,7 @@ export const userApi = rootApi.injectEndpoints({
     // Add payment method details
     addPaymentMethodDetails: builder.mutation({
       query: ({ paymentMethodId, details }) => ({
-        url: `/payments/${paymentMethodId}`,
+        url: `/me/payments/${paymentMethodId}`,
         method: "POST",
         body: details,
       }),
@@ -90,7 +90,7 @@ export const userApi = rootApi.injectEndpoints({
     // Delete payment method
     deletePaymentMethod: builder.mutation({
       query: (paymentMethodId) => ({
-        url: `/payments/${paymentMethodId}`,
+        url: `/me/payments/${paymentMethodId}`,
         method: "DELETE",
       }),
     }),
@@ -99,40 +99,40 @@ export const userApi = rootApi.injectEndpoints({
     // Create a new wishlist
     newWishlist: builder.mutation({
       query: (wishlistData) => ({
-        url: "/wishlists",
+        url: "/me/wishlists",
         method: "POST",
         body: wishlistData,
       }),
     }),
     // Fetch wishlists
     myWishlists: builder.query({
-      query: () => "/wishlists",
+      query: () => "/me/wishlists",
     }),
     // Add wishlist item
     addWishlistItem: builder.mutation({
       query: ({ wishlistId, productId }) => ({
-        url: `/wishlists/${wishlistId}/${productId}`,
+        url: `/me/wishlists/${wishlistId}/${productId}`,
         method: "POST",
       }),
     }),
     // Remove wishlist item
     removeWishlistItem: builder.mutation({
       query: ({ wishlistId, wishlistItemId }) => ({
-        url: `/wishlists/${wishlistId}/${wishlistItemId}`,
+        url: `/me/wishlists/${wishlistId}/${wishlistItemId}`,
         method: "DELETE",
       }),
     }),
     // Delete wishlist
     deleteWishlist: builder.mutation({
       query: (wishlistId) => ({
-        url: `/wishlists/${wishlistId}`,
+        url: `/me/wishlists/${wishlistId}`,
         method: "DELETE",
       }),
     }),
     // Share a wishlist
     shareWishlist: builder.mutation({
       query: ({ wishlistId, data }) => ({
-        url: `/wishlists/${wishlistId}`,
+        url: `/me/wishlists/${wishlistId}`,
         method: "PATCH",
         body: data,
       }),
