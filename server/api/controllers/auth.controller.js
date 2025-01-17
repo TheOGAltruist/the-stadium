@@ -43,7 +43,6 @@ const login = async (req, res, next) => {
       const {
         id,
         password,
-        isAdmin,
         resetPassToken,
         currentToken,
         resetPassTokenExpiry,
@@ -103,7 +102,6 @@ const register = async (req, res, next) => {
     const {
       id,
       password,
-      isAdmin,
       resetPassToken,
       currentToken,
       resetPassTokenExpiry,
