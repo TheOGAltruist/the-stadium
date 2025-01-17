@@ -14,14 +14,14 @@ const getGraphToken = async () => {
 }
 
 //For sending email
-const sendEmail = async (username, tempToken) => {
+const sendEmail = async (username, tempToken, email) => {
     try {
         const client = await getGraphToken();
         const link = `http://localhost:3000/api/auth/passwordreset?token=${tempToken}`
         const emailBody = `<p>
             Hello ${username},<br/><br/>
             You can use the link below to reset your password.<br/><br/>
-            <a href=http://localhost:3000/api/auth/passwordreset?token=${tempToken}>Reset Password</a>
+            <a href=${link}>Reset Password</a>
         </p>`
         const total = {
             "message": {
@@ -38,7 +38,7 @@ const sendEmail = async (username, tempToken) => {
                 "toRecipients": [
                     {
                         "emailAddress": {
-                            "address": "sravan.taraknath@outlook.com"
+                            "address": email
                         }
                     }
                 ],
