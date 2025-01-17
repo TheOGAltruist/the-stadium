@@ -618,9 +618,9 @@ const ProductManagement = () => {
               <TableCell>Name</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>Quantity</TableCell>
+              <TableCell>Sku ID</TableCell>
               <TableCell>Tags</TableCell>
               <TableCell>Categories</TableCell>
-              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
