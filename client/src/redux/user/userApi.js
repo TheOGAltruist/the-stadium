@@ -95,8 +95,69 @@ export const userApi = rootApi.injectEndpoints({
       }),
     }),
 
-
+    // WISHLIST-related endpoints
+    // Create a new wishlist
+    newWishlist: builder.mutation({
+      query: (wishlistData) => ({
+        url: "/wishlists",
+        method: "POST",
+        body: wishlistData,
+      }),
+    }),
+    // Fetch wishlists
+    myWishlists: builder.query({
+      query: () => "/wishlists",
+    }),
+    // Add wishlist item
+    addWishlistItem: builder.mutation({
+      query: ({ wishlistId, productId }) => ({
+        url: `/wishlists/${wishlistId}/${productId}`,
+        method: "POST",
+      }),
+    }),
+    // Remove wishlist item
+    removeWishlistItem: builder.mutation({
+      query: ({ wishlistId, wishlistItemId }) => ({
+        url: `/wishlists/${wishlistId}/${wishlistItemId}`,
+        method: "DELETE",
+      }),
+    }),
+    // Delete wishlist
+    deleteWishlist: builder.mutation({
+      query: (wishlistId) => ({
+        url: `/wishlists/${wishlistId}`,
+        method: "DELETE",
+      }),
+    }),
+    // Share a wishlist
+    shareWishlist: builder.mutation({
+      query: ({ wishlistId, data }) => ({
+        url: `/wishlists/${wishlistId}`,
+        method: "PATCH",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useGetMeQuery, useEditMeMutation } = userApi;
+export const {
+  useGetMeQuery,
+  useEditMeMutation,
+  useNewOrderMutation,
+  useMyOrdersQuery,
+  useMyCartItemsQuery,
+  useAddCartItemMutation,
+  useRemoveCartItemMutation,
+  useUpdateCartItemMutation,
+  useDeleteCartMutation,
+  useNewWishlistMutation,
+  useMyWishlistsQuery,
+  useAddWishlistItemMutation,
+  useRemoveWishlistItemMutation,
+  useDeleteWishlistMutation,
+  useShareWishlistMutation,
+  useGetPaymentMethodsQuery,
+  useAddPaymentMethodDetailsMutation,
+  useAddPaymentMethodMutation,
+  useDeletePaymentMethodMutation,
+} = userApi;
