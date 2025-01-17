@@ -132,8 +132,11 @@ const ProductManagement = () => {
       image: productData.imageFile
         ? "uploaded_file_placeholder"
         : productData.imageUrl,
-      tags: formattedTags.split(", "),
-      categories: formattedCategories.split(", "),
+      tags: typeof formattedTags === "string" ? formattedTags.split(", ") : [],
+      categories:
+        typeof formattedCategories === "string"
+          ? formattedCategories.split(", ")
+          : [],
     };
 
     // API Calls to the backend
