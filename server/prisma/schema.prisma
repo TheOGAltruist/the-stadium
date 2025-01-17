@@ -173,4 +173,5 @@ model OrderItem {
   quantity Int
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+  @@unique([order_id, product_id])
 }
