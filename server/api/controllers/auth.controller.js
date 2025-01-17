@@ -267,6 +267,7 @@ const forgotPassword = async (req, res, next) => {
       select: {
         id: true,
         username: true,
+        email: true
       },
     });
 
@@ -284,7 +285,7 @@ const forgotPassword = async (req, res, next) => {
       },
     });
 
-    await sendEmail(user.username, updateUser.resetPassToken);
+    await sendEmail(user.username, updateUser.resetPassToken, user.email);
 
     res.status(200).json({
       status: "Success!",
