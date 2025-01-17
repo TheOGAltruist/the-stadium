@@ -12,7 +12,6 @@ const nanoid = async () => {
 
 //Login function
 const login = async (req, res, next) => {
-  console.log(req.hostname);
   try {
     const response = await prisma.user.findFirstOrThrow({
       where: {
@@ -55,8 +54,8 @@ const login = async (req, res, next) => {
         res
           .cookie("token", `Bearer ${token}`, {
             httpOnly: true,
-            sameSite: "strict",
-            secure: process.env.NODE_ENV,
+            sameSite: "none",
+            secure: true,
             expires: new Date(Date.now() + 3600000),
           })
           .json({
@@ -114,8 +113,8 @@ const register = async (req, res, next) => {
       res
         .cookie("token", `Bearer ${token}`, {
           httpOnly: true,
-          sameSite: "strict",
-          secure: process.env.NODE_ENV,
+          sameSite: "none",
+          secure: true,
           expires: new Date(Date.now() + 3600000),
         })
         .json({
@@ -174,7 +173,8 @@ const oauthRegister = async (req, res, next) => {
       res
         .cookie("token", `Bearer ${token}`, {
           httpOnly: true,
-          sameSite: "strict",
+          sameSite: "none",
+          secure: true,
           expires: new Date(Date.now() + 3600000),
         })
         .json({
