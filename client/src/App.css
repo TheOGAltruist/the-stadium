@@ -1,3 +1,12 @@
 body {
-  background-color: #667c14;
+  background-color: #edebeb;
+}
+.navButton {
+  font-size: 1rem !important;
+  color: #edebeb !important;
+}
+
+.navButton svg {
+  font-size: 2rem !important;
+  color: #edebeb !important;
 }
