@@ -53,6 +53,10 @@ const login = async (req, res, next) => {
 
         res
           .cookie("token", `Bearer ${token}`, {
+            httpOnly: true,
+            sameSite: "none",
+            secure: false,
+            signed: false,
             expires: new Date(Date.now() + 3600000),
           })
           .json({
