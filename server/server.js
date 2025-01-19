@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 
 // CORS middleware
 app.use(cors({
-  origin: '*', // Allow requests from this origin
+  origin: 'http://localhost:5173', // Allow requests from this origin
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Specify allowed methods
   credentials: true // Allow credentials if needed
 }));
