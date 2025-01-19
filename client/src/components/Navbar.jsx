@@ -1,19 +1,38 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import { useSelector } from "react-redux"; // Import useSelector to access Redux state
+import { useDispatch, useSelector } from "react-redux"; // Import useSelector to access Redux state
 import Logo from "../assets/Stadium.png"; // Import the logo
+import { logout } from "../redux/auth/authSlice";
 
 const Navbar = () => {
+  // Initialize useHistory for navigation
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   // Access the authentication state from Redux
   const user = useSelector((state) => state.auth.user);
   // debugging isAdmin panel to show
   // console.log("User Object", user);
+
+  // Logout function
+  const handleLogout = async () => {
+    try {
+      // Make a RTK backend call to logout and clear session cookies/tokens
+      dispatch(logout());
+      // Redirect back to homepage
+      navigate("/");
+      // Show an alert message
+      alert("Successfully logged out!");
+    } catch (error) {
+      console.error("faied to logout", error);
+    }
+  };
 
   return (
     <Box sx={{ width: "100%", overflowX: "hidden" }}>
@@ -104,15 +123,24 @@ const Navbar = () => {
               Cart
             </Button>
             {user ? (
-              <Button
-                className="navButton"
-                color="inherit"
-                component={Link}
-                to="/userhome"
-                startIcon={<AccountCircleIcon />}
-              >
-                Account
-              </Button>
+              <>
+                <Button
+                  className="navButton"
+                  color="inherit"
+                  component={Link}
+                  to="/userhome"
+                  startIcon={<AccountCircleIcon />}
+                >
+                  Account
+                </Button>
+                <Button
+                  className="navButton"
+                  color="inherit"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Button>
+              </>
             ) : (
               <Button
                 className="navButton"
