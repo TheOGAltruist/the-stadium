@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Box,
   Grid,
@@ -158,6 +159,12 @@ const Home = () => {
       filters.category ? product.categories.includes(filters.category) : true
     )
     .sort((a, b) => (sortBy === "low" ? a.price - b.price : b.price - a.price));
+
+  // using isAuthenticated to check for loggedin status for Wishlist button in product modal
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  // show messages for wishlist button click
+  const [wishlistMessage, setWishlistMessage] = useState("");
 
   return (
     <Box sx={{ pt: { xs: "15rem", md: "8rem" } }}>
@@ -368,9 +375,17 @@ const Home = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() =>
-                  alert(`Added to Wishlist: ${selectedProduct.name}`)
-                }
+                onClick={() => {
+                  if (isAuthenticated) {
+                    setWishlistMessage(
+                      `Added to Wishlist: ${selectedProduct.name}`
+                    );
+                  } else {
+                    setWishlistMessage(
+                      "Please log in to add items to your wishlist."
+                    );
+                  }
+                }}
               >
                 Add to Wishlist
               </Button>
@@ -384,6 +399,21 @@ const Home = () => {
                 Add to Cart
               </Button>
             </Box>
+            {wishlistMessage && (
+              <Box
+                sx={{
+                  marginTop: "20px",
+                  padding: "10px",
+                  backgroundColor: isAuthenticated ? "#d4edda" : "#f8d7da",
+                  color: isAuthenticated ? "#155724" : "#721c24",
+                  border: "1px solid",
+                  borderColor: isAuthenticated ? "#c3e6cb" : "#f5c6cb",
+                  borderRadius: "4px",
+                }}
+              >
+                {wishlistMessage}
+              </Box>
+            )}
           </DialogContent>
           <DialogActions sx={{ backgroundColor: "#3b3b3b" }}>
             <Button
