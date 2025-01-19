@@ -83,8 +83,8 @@ const updateProduct = async (req, res, next) => {
       data: {
         name,
         description,
-        price,
-        quantity,
+        price: parseFloat(price),
+        quantity: +quantity,
         skuId,
         image: imageUrl
       },
