@@ -54,8 +54,6 @@ const login = async (req, res, next) => {
         res
           .cookie("token", `Bearer ${token}`, {
             httpOnly: true,
-            sameSite: "none",
-            secure: true,
             expires: new Date(Date.now() + 3600000),
           })
           .json({
