@@ -22,14 +22,14 @@ const CheckoutCart = () => {
 
   // RTK Query Fetch cart items
   const { data = [], isLoading, error, refetch } = useMyCartItemsQuery();
-  console.log(data);
+  // console.log(data);
   // try to access the array of cart items from the response object from the backend
   const cart = Array.isArray(data) ? data : []; // check if data is array and set it to cart. if not, set it to empty array
-  console.log(cart);
+  // console.log(cart);
   Object.keys(data).forEach((key) => {
     cart.push(data[key]);
   });
-  console.log(cart);
+  // console.log(cart);
 
   const [updateCartItem] = useUpdateCartItemMutation();
   const [removeCartItem] = useRemoveCartItemMutation();
