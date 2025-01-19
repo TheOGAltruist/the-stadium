@@ -18,6 +18,7 @@ app.use(cookieParser());
 app.use((req, res, next) => {
   req.time = new Date(Date.now()).toString();
   console.log("INFO: ", req.method, req.hostname, req.path, req.time, req.body, req.cookies);
+  console.log(req);
   next();
 });
 
