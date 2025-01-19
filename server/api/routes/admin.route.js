@@ -35,8 +35,8 @@ router.patch("/users/:userId", isAdmin, modifySpecificUser) //Update specific us
 //Product routes
 router.get("/products", isAdmin, getAllProducts)
 router.post("/products", isAdmin, createProduct); //Add new product
-router.patch("products/:id", isAdmin, updateProduct); //Update specific product
-router.delete("products/:id", isAdmin, deleteProduct); //Remove a product
+router.patch("/products/:id", isAdmin, updateProduct); //Update specific product
+router.delete("/products/:id", isAdmin, deleteProduct); //Remove a product
 
 //Order routes
 router.get("/orders", isAdmin, getAllOrders) //Get all orders
