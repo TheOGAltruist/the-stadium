@@ -24,6 +24,7 @@ import {
   useGetAllProductsQuery,
   useGetProductByIdQuery,
 } from "../redux/products/productsApi";
+import { useAddCartItemMutation } from "../redux/user/userApi";
 
 // Mock product data
 // const mockProducts = [
@@ -93,6 +94,9 @@ const Home = () => {
     skip: !selectedProductId,
   });
 
+  // Call addCartItem mutation from RTK
+  const [addCartItem] = useAddCartItemMutation();
+
   // Handle search query change
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -121,10 +125,21 @@ const Home = () => {
   };
 
   // Show snackbar
-  const handleAddToCart = (productName) => {
-    setSnackbarMessage(`Added to Cart: ${productName}`);
-    setSnackbarOpen(true);
+  const handleAddToCart = async (productId, productName) => {
+    try {
+      await addCartItem({ productId, quantity: 1 });
+      setSnackbarMessage(`Added to Cart: ${productName}`);
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Failed to add to cart", error);
+      setSnackbarMessage("Failed to add to cart");
+    }
   };
+  // Tyler's code
+  // const handleAddToCart = (productName) => {
+  //   setSnackbarMessage(`Added to Cart: ${productName}`);
+  //   setSnackbarOpen(true);
+  // };
 
   // Close snackbar
   const handleSnackbarClose = () => {
@@ -312,7 +327,7 @@ const Home = () => {
                       size="small"
                       variant="contained"
                       color="secondary"
-                      onClick={() => handleAddToCart(product.name)}
+                      onClick={() => handleAddToCart(product.id, product.name)} //added product.id
                     >
                       Add to Cart
                     </Button>
@@ -362,7 +377,9 @@ const Home = () => {
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={() => handleAddToCart(selectedProduct.name)}
+                onClick={() =>
+                  handleAddToCart(selectedProduct.id, selectedProduct.name)
+                } //added selectedProduct.id
               >
                 Add to Cart
               </Button>

@@ -52,7 +52,7 @@ const Login = () => {
       : { username: loginInput, password };
 
     // console log for testing regex statement
-    console.log("Login Data:", loginData);
+    // console.log("Login Data:", loginData);
 
     // Add API call logic here
     try {
@@ -63,7 +63,7 @@ const Login = () => {
         // Store the token in localStorage
         // localStorage.setItem("token", user.token);
 
-        console.log("Login successful", user);
+        // console.log("Login successful", user);
 
         // Dispatch loginSuccess action to store token and user data in Redux
         // dispatch(loginSuccess({ user: user.user, token: user.token }));

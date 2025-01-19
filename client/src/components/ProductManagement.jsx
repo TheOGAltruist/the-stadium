@@ -97,14 +97,16 @@ const ProductManagement = () => {
   };
 
   const formatInput = (input) => {
-    if (!Array.isArray(input)) {
-      console.error("Expected an array, but received:", input);
+    if (!input || typeof input !== "string") {
       return [];
     }
-    return input.map(
-      (item) =>
-        item.trim().charAt(0).toUpperCase() + item.trim().slice(1).toLowerCase()
-    );
+    return input
+      .split(",")
+      .map(
+        (item) =>
+          item.trim().charAt(0).toUpperCase() +
+          item.trim().slice(1).toLowerCase()
+      );
   };
 
   const validateForm = () => {
@@ -145,32 +147,50 @@ const ProductManagement = () => {
     const formattedTags = formatInput(productData.tags);
     const formattedCategories = formatInput(productData.categories);
 
-    // Example payload
-    const payload = {
-      name: productData.name,
-      description: productData.description,
-      price: productData.price,
-      quantity: productData.quantity,
-      image: productData.imageFile
-        ? "uploaded_file_placeholder"
-        : productData.imageUrl,
-      skuId: productData.skuId,
-      tags: typeof formattedTags === "string" ? formattedTags.split(", ") : [],
-      categories:
-        typeof formattedCategories === "string"
-          ? formattedCategories.split(", ")
-          : [],
-    };
+    // Example payload (Tyler's code)
+    // const payload = {
+    //   name: productData.name,
+    //   description: productData.description,
+    //   price: productData.price,
+    //   quantity: productData.quantity,
+    //   image: productData.imageFile
+    //     ? "uploaded_file_placeholder"
+    //     : productData.imageUrl,
+    //   skuId: productData.skuId,
+    //   tags: typeof formattedTags === "string" ? formattedTags.split(", ") : [],
+    //   categories:
+    //     typeof formattedCategories === "string"
+    //       ? formattedCategories.split(", ")
+    //       : [],
+    // };
+
+    // Made an alternative way to handle the formData in order to properly incorporate imageFile upload
+    const formData = new FormData();
+    formData.append("name", productData.name);
+    formData.append("description", productData.description);
+    formData.append("price", productData.price);
+    formData.append("quantity", productData.quantity);
+    formData.append("skuId", productData.skuId);
+    formData.append("tags", JSON.stringify(formattedTags));
+    formData.append("categories", JSON.stringify(formattedCategories));
+
+    if (productData.imageFile) {
+      formData.append("image", productData.imageFile);
+    } else {
+      formData.append("imageUrl", productData.imageUrl);
+    }
 
     // API Calls to the backend
     try {
+        const formObject = Object.fromEntries(formData)
       // Edit Mode
       if (isEditMode) {
-        await updateProduct({ id: productData.id, ...payload }).unwrap();
+        console.log({ id: productData.id, ...formObject });
+        await updateProduct({ id: productData.id, ...formObject }).unwrap(); //changed payload to formData
         setSuccessMessage("Product successfully updated!");
       } else {
         // Call the createProduct mutation (to backend)
-        await createProduct(payload).unwrap();
+        await createProduct(formObject).unwrap(); //changed payload to formData
         //Display the success message and reset form
         setSuccessMessage("Product successfully added");
       }
@@ -200,6 +220,8 @@ const ProductManagement = () => {
   const handleDeleteProduct = async (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
+        console.log(productId);
+
         // Call the deleteProduct mutation
         await deleteProduct(productId).unwrap();
         alert("Product successfully deleted!");
