@@ -51,16 +51,16 @@ const getProductById = async (req, res, next) => {
 
 // Create a new product (ADMIN ONLY)
 const createProduct = async (req, res, next) => {
-  const { name, description, price, quantity, skuId, image } = req.body;
+  const { name, description, price, quantity, skuId, imageUrl } = req.body;
   try {
     const newProduct = await prisma.product.create({
       data: {
         name,
         description,
-        price,
-        quantity,
+        price: parseFloat(price),
+        quantity: parseInt(quantity),
         skuId,
-        image
+        image: imageUrl
       },
     });
     res.status(201).json({
@@ -84,7 +84,7 @@ const updateProduct = async (req, res, next) => {
         name,
         description,
         price: parseFloat(price),
-        quantity: +quantity,
+        quantity: parseInt(quantity),
         skuId,
         image: imageUrl
       },
@@ -107,6 +107,7 @@ const deleteProduct = async (req, res, next) => {
     await prisma.product.delete({ where: { id } });
     res.status(204).send();
   } catch (error) {
+    console.log(error)
     next({ message: "Failed to delete product" });
   }
 };
