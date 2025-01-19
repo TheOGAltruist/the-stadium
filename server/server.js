@@ -18,13 +18,12 @@ app.use(cookieParser());
 app.use((req, res, next) => {
   req.time = new Date(Date.now()).toString();
   console.log("INFO: ", req.method, req.hostname, req.path, req.time, req.body, req.cookies);
-  console.log(req);
   next();
 });
 
 // CORS middleware
 app.use(cors({
-  origin: true, // Allow requests from this origin
+  origin: *, // Allow requests from this origin
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Specify allowed methods
   credentials: true // Allow credentials if needed
 }));
