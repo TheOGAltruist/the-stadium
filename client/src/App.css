@@ -10,3 +10,50 @@ body {
   font-size: 2rem !important;
   color: #edebeb !important;
 }
+
+.about-card {
+  background-color: #3b3b3b !important;
+  color: #edebeb !important;
+}
+
+#accountdetails {
+  background-color: #3b3b3b !important;
+  color: #edebeb !important;
+  padding: 20px;
+  margin: -16px;
+  margin-bottom: 20px;
+}
+
+#account-detail-biographics {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important; /* Space between rows */
+}
+
+.account-detail-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  max-width: 800px !important; /* Optional: Constrain row width */
+}
+
+.account-detail-text {
+  flex: 1 !important;
+  text-align: left !important;
+}
+
+.account-detail-icon {
+  margin-left: 8px !important; /* Space between text and icon */
+}
+
+.main-box {
+  padding-top: 15rem;
+}
+
+@media (min-width: 900px) {
+  .main-box {
+    padding-top: 8rem;
+  }
+}

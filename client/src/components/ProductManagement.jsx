@@ -40,7 +40,12 @@ import { useNavigate } from "react-router-dom";
 
 const ProductManagement = () => {
   // Initialize the Product-related mutations and query
-  const { data: products, isLoading, error, refetch } = useGetAllProductsQuery();
+  const {
+    data: products,
+    isLoading,
+    error,
+    refetch,
+  } = useGetAllProductsQuery();
   const [createProduct] = useCreateProductMutation();
   const [updateProduct] = useUpdateProductMutation();
   const [deleteProduct] = useDeleteProductMutation();
@@ -182,7 +187,7 @@ const ProductManagement = () => {
 
     // API Calls to the backend
     try {
-        const formObject = Object.fromEntries(formData)
+      const formObject = Object.fromEntries(formData);
       // Edit Mode
       if (isEditMode) {
         console.log({ id: productData.id, ...formObject });
@@ -332,7 +337,7 @@ const ProductManagement = () => {
   };
 
   return (
-    <Box sx={{ pt: { xs: "15rem", md: "5rem" } }} align="center">
+    <Box className="main-box" align="center" px={20}>
       <Typography variant="h4" gutterBottom>
         Product Management
       </Typography>

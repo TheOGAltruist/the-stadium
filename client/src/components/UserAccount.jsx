@@ -3,25 +3,26 @@ import { Box, Typography, Button } from "@mui/material";
 import Login from "./Login";
 import Register from "./Register";
 
-
 const UserAccount = () => {
   const [showLogin, setShowLogin] = useState(true);
 
   return (
-    <Box sx={{ pt: { xs: "15rem", md: "5rem" } }}>
+    <Box className="main-box">
       <Typography variant="h4" textAlign="center" gutterBottom>
         Account
       </Typography>
       <Box sx={{ textAlign: "center", marginBottom: "20px" }}>
         <Button
-          variant={showLogin ? "contained" : "outlined"}
+          variant={"contained"}
+          color={showLogin ? "secondary" : "primary"}
           onClick={() => setShowLogin(true)}
           sx={{ marginRight: "10px" }}
         >
           Login
         </Button>
         <Button
-          variant={!showLogin ? "contained" : "outlined"}
+          variant={"contained"}
+          color={showLogin ? "primary" : "secondary"}
           onClick={() => setShowLogin(false)}
         >
           Register

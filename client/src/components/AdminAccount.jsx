@@ -6,7 +6,7 @@ const AdminAccount = () => {
   const navigate = useNavigate();
 
   return (
-    <Box sx={{ pt: { xs: "15rem", md: "5rem" } }} align="center">
+    <Box className="main-box" align="center">
       <Typography variant="h4" gutterBottom>
         Admin Dashboard
       </Typography>
