@@ -22,11 +22,11 @@ app.use((req, res, next) => {
 });
 
 // CORS middleware
-app.use(cors({
-  origin: 'http://localhost:5173', // Allow requests from this origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Specify allowed methods
-  credentials: true // Allow credentials if needed
-}));
+// app.use(cors({
+//   origin: 'http://localhost:5173', // Allow requests from this origin
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Specify allowed methods
+//   credentials: true // Allow credentials if needed
+// }));
 
 // connect to port
 const port = process.env.PORT;
