@@ -19,8 +19,6 @@ import {
 } from "../redux/user/userApi";
 
 const CheckoutCart = () => {
-  // Initialize cart state
-  const [cart, setCart] = useState([]);
   // Mock cart data
   // const [cart, setCart] = useState([
   //   { id: 1, name: "Basketball", price: 29.99, quantity: 1 },
@@ -29,7 +27,16 @@ const CheckoutCart = () => {
   // ]);
 
   // RTK Query Fetch cart items
-  const { data: cartDetails, isLoading, error } = useMyCartItemsQuery();
+  const { data, isLoading, error } = useMyCartItemsQuery();
+  console.log(data);
+  // try to access the array of cart items from the response object from the backend
+  let cart = [];
+  Object.keys(data).forEach((key) => {
+    cart.push(data[key]);
+  });
+  console.log(cart);
+  
+
   const [updateCartItem] = useUpdateCartItemMutation();
   const [removeCartItem] = useRemoveCartItemMutation();
   const [newOrder] = useNewOrderMutation();
@@ -61,7 +68,6 @@ const CheckoutCart = () => {
     try {
       // Call the remove cart item mutation from RTK
       await removeCartItem(id);
-      setCart((prevCart) => prevCart.filter((item) => item.id !== id));
     } catch (error) {
       console.error("Failed to remove cart item", error);
     }
@@ -82,7 +88,6 @@ const CheckoutCart = () => {
       await newOrder({ items: cart });
       // Set orderPlaced to true upon successful order
       setOrderPlaced(true);
-      setCart([])
     } catch (error) {
       console.error("Failed to place order", error);
       alert("Failed to place order");
@@ -94,7 +99,7 @@ const CheckoutCart = () => {
     return <CircularProgress />;
   }
 
-  // aded an error message
+  // added an error message
   if (error) {
     return <Typography variant="h6">Failed to load cart items.</Typography>;
   }
