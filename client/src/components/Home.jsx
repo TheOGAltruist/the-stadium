@@ -167,7 +167,7 @@ const Home = () => {
   const [wishlistMessage, setWishlistMessage] = useState("");
 
   return (
-    <Box sx={{ pt: { xs: "15rem", md: "8rem" } }}>
+    <Box className="main-box">
       <Box
         sx={{
           backgroundColor: "#3b3b3b", // Background color
@@ -198,7 +198,7 @@ const Home = () => {
             "& .MuiOutlinedInput-root": {
               color: "#edebeb", // Text color
               "& fieldset": {
-                borderColor: "#3b3b3b", // Default border color
+                borderColor: "#edebeb", // Default border color
               },
               "&:hover fieldset": {
                 borderColor: "#edebeb", // Hover border color
@@ -230,7 +230,7 @@ const Home = () => {
             "& .MuiOutlinedInput-root": {
               color: "#edebeb", // Text color
               "& fieldset": {
-                borderColor: "#3b3b3b", // Default border color
+                borderColor: "#edebeb", // Default border color
               },
               "&:hover fieldset": {
                 borderColor: "#edebeb", // Hover border color
@@ -248,12 +248,13 @@ const Home = () => {
           }}
         >
           {/* Filter: Tag */}
-          <FormControl sx={{ minWidth: 150 }}>
+          <FormControl sx={{ minWidth: 200 }}>
             <InputLabel>Tag</InputLabel>
             <Select
               name="tag"
               value={filters.tag}
               onChange={handleFilterChange}
+              label="Tag"
             >
               <MenuItem value="">All</MenuItem>
               <MenuItem value="sports">Sports</MenuItem>
@@ -266,12 +267,13 @@ const Home = () => {
           </FormControl>
 
           {/* Filter: Category */}
-          <FormControl sx={{ minWidth: 150 }}>
+          <FormControl sx={{ minWidth: 200 }}>
             <InputLabel>Category</InputLabel>
             <Select
               name="category"
               value={filters.category}
               onChange={handleFilterChange}
+              label="Category"
             >
               <MenuItem value="">All</MenuItem>
               <MenuItem value="Equipment">Equipment</MenuItem>
@@ -284,9 +286,9 @@ const Home = () => {
           </FormControl>
 
           {/* Sort By Price */}
-          <FormControl sx={{ minWidth: 150 }}>
+          <FormControl sx={{ minWidth: 200 }}>
             <InputLabel>Sort By</InputLabel>
-            <Select value={sortBy} onChange={handleSortChange}>
+            <Select value={sortBy} onChange={handleSortChange} label="Sort By">
               <MenuItem value="low">Price: Low to High</MenuItem>
               <MenuItem value="high">Price: High to Low</MenuItem>
             </Select>

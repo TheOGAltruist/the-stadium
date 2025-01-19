@@ -6,6 +6,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useDispatch, useSelector } from "react-redux"; // Import useSelector to access Redux state
 import Logo from "../assets/Stadium.png"; // Import the logo
 import { logout } from "../redux/auth/authSlice";
@@ -137,6 +138,7 @@ const Navbar = () => {
                   className="navButton"
                   color="inherit"
                   onClick={handleLogout}
+                  startIcon={<LogoutIcon />}
                 >
                   Logout
                 </Button>

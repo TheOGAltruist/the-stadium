@@ -19,7 +19,6 @@ import {
 } from "../redux/user/userApi";
 
 const CheckoutCart = () => {
-
   // RTK Query Fetch cart items
   const { data = [], isLoading, error, refetch } = useMyCartItemsQuery();
   // console.log(data);
@@ -35,7 +34,7 @@ const CheckoutCart = () => {
   const [removeCartItem] = useRemoveCartItemMutation();
   const [newOrder] = useNewOrderMutation();
   const [orderPlaced, setOrderPlaced] = useState(false);
-  
+
   // Refresh the cart data after adding or updating items
   useEffect(() => {
     refetch();
@@ -133,7 +132,7 @@ const CheckoutCart = () => {
   }
 
   return (
-    <Box sx={{ pt: { xs: "15rem", md: "5rem" } }}>
+    <Box className="main-box">
       <Typography variant="h4" textAlign="center" gutterBottom>
         <ShoppingCartIcon fontSize="large" /> Checkout Cart
       </Typography>
@@ -143,7 +142,7 @@ const CheckoutCart = () => {
           Your cart is empty.
         </Typography>
       ) : (
-        <Box>
+        <Box sx={{ paddingX: 20 }}>
           {/* List of Cart Items */}
           {cart.map((item) => (
             <Card
