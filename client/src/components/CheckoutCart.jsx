@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -21,7 +21,7 @@ import {
 const CheckoutCart = () => {
 
   // RTK Query Fetch cart items
-  const { data = [], isLoading, error } = useMyCartItemsQuery();
+  const { data = [], isLoading, error, refetch } = useMyCartItemsQuery();
   console.log(data);
   // try to access the array of cart items from the response object from the backend
   const cart = Array.isArray(data) ? data : []; // check if data is array and set it to cart. if not, set it to empty array
@@ -36,6 +36,11 @@ const CheckoutCart = () => {
   const [newOrder] = useNewOrderMutation();
   const [orderPlaced, setOrderPlaced] = useState(false);
   
+  // Refresh the cart data after adding or updating items
+  useEffect(() => {
+    refetch();
+  }, [cart]);
+
   // Update quantity
   const updateQuantity = async (id, newQuantity) => {
     try {
@@ -44,6 +49,8 @@ const CheckoutCart = () => {
         cartItemId: id,
         quantity: Math.max(1, newQuantity),
       });
+      //Refresh the cart
+      refetch();
     } catch (error) {
       console.error("Failed to update cart item", error);
     }
@@ -62,6 +69,8 @@ const CheckoutCart = () => {
     try {
       // Call the remove cart item mutation from RTK
       await removeCartItem(id);
+      // refresh the cart
+      refetch();
     } catch (error) {
       console.error("Failed to remove cart item", error);
     }
