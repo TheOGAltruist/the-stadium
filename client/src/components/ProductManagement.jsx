@@ -40,7 +40,7 @@ import { useNavigate } from "react-router-dom";
 
 const ProductManagement = () => {
   // Initialize the Product-related mutations and query
-  const { data: products, isLoading, error } = useGetAllProductsQuery();
+  const { data: products, isLoading, error, refetch } = useGetAllProductsQuery();
   const [createProduct] = useCreateProductMutation();
   const [updateProduct] = useUpdateProductMutation();
   const [deleteProduct] = useDeleteProductMutation();
@@ -168,8 +168,8 @@ const ProductManagement = () => {
     const formData = new FormData();
     formData.append("name", productData.name);
     formData.append("description", productData.description);
-    formData.append("price", productData.price);
-    formData.append("quantity", productData.quantity);
+    formData.append("price", `${Number(productData.price)}`);
+    formData.append("quantity", `${Number(productData.quantity)}`);
     formData.append("skuId", productData.skuId);
     formData.append("tags", JSON.stringify(formattedTags));
     formData.append("categories", JSON.stringify(formattedCategories));
@@ -188,11 +188,13 @@ const ProductManagement = () => {
         console.log({ id: productData.id, ...formObject });
         await updateProduct({ id: productData.id, ...formObject }).unwrap(); //changed payload to formData
         setSuccessMessage("Product successfully updated!");
+        refetch(); //refresh product data
       } else {
         // Call the createProduct mutation (to backend)
         await createProduct(formObject).unwrap(); //changed payload to formData
         //Display the success message and reset form
         setSuccessMessage("Product successfully added");
+        refetch(); // refresh product data
       }
       resetForm();
       //   setProductData({
@@ -225,6 +227,7 @@ const ProductManagement = () => {
         // Call the deleteProduct mutation
         await deleteProduct(productId).unwrap();
         alert("Product successfully deleted!");
+        refetch(); //refresh product data
       } catch (error) {
         console.error("Failed to delete product", error);
         alert("Failed to delete product");
