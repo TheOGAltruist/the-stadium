@@ -13,7 +13,7 @@ const Navbar = () => {
   // Access the authentication state from Redux
   const user = useSelector((state) => state.auth.user);
   // debugging isAdmin panel to show
-  console.log("User Object", user);
+  // console.log("User Object", user);
 
   return (
     <Box sx={{ width: "100%", overflowX: "hidden" }}>
@@ -49,7 +49,6 @@ const Navbar = () => {
                 height: "100px",
                 width: "100px",
                 objectFit: "contain",
-                backgroundColor: "transparent",
                 backgroundColor: "#708D81",
                 padding: "6px",
                 paddingX: "20px",
