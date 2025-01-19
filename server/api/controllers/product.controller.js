@@ -76,16 +76,17 @@ const createProduct = async (req, res, next) => {
 // Update a product (ADMIN ONLY)
 const updateProduct = async (req, res, next) => {
   const { id } = req.params;
-  const { name, description, price, quantity, skuId } = req.body;
+  const { name, description, price, quantity, skuId, imageUrl } = req.body;
   try {
     const product = await prisma.product.update({
       where: { id },
       data: {
         name,
         description,
-        price,
-        quantity,
+        price: parseFloat(price),
+        quantity: +quantity,
         skuId,
+        image: imageUrl
       },
     });
     res.status(200).json({
@@ -94,6 +95,7 @@ const updateProduct = async (req, res, next) => {
       message: "Product updated successfully",
     });
   } catch (error) {
+    console.log(error)
     next({ message: "Failed to update product" });
   }
 };
