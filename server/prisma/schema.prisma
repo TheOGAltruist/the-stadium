@@ -62,7 +62,7 @@ model Product {
 model Category {
   id String @id @default(uuid(4))
   name String
-  product Product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product Product @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   product_id String
   @@unique([name, product_id])
 }
@@ -70,7 +70,7 @@ model Category {
 model Tag {
   id String @id @default(uuid(4))
   name String
-  product Product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product Product @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   product_id String
   @@unique([name, product_id])
 }
