@@ -6,37 +6,125 @@ import {
   CardContent,
   IconButton,
   Button,
-  Grid,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import {
+  useMyCartItemsQuery,
+  useNewOrderMutation,
+  useRemoveCartItemMutation,
+  useUpdateCartItemMutation,
+} from "../redux/user/userApi";
 
 const CheckoutCart = () => {
   // Mock cart data
-  const [cart, setCart] = useState([
-    { id: 1, name: "Basketball", price: 29.99, quantity: 1 },
-    { id: 2, name: "Soccer Ball", price: 19.99, quantity: 2 },
-    { id: 3, name: "Running Shoes", price: 59.99, quantity: 1 },
-  ]);
+  // const [cart, setCart] = useState([
+  //   { id: 1, name: "Basketball", price: 29.99, quantity: 1 },
+  //   { id: 2, name: "Soccer Ball", price: 19.99, quantity: 2 },
+  //   { id: 3, name: "Running Shoes", price: 59.99, quantity: 1 },
+  // ]);
+
+  // RTK Query Fetch cart items
+  const { data, isLoading, error } = useMyCartItemsQuery();
+  console.log(data);
+  // try to access the array of cart items from the response object from the backend
+  let cart = [];
+  Object.keys(data).forEach((key) => {
+    cart.push(data[key]);
+  });
+  console.log(cart);
+  
+
+  const [updateCartItem] = useUpdateCartItemMutation();
+  const [removeCartItem] = useRemoveCartItemMutation();
+  const [newOrder] = useNewOrderMutation();
+  const [orderPlaced, setOrderPlaced] = useState(false);
 
   // Update quantity
-  const updateQuantity = (id, newQuantity) => {
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, newQuantity) } : item
-      )
-    );
+  const updateQuantity = async (id, newQuantity) => {
+    try {
+      // Call the update cart item mutation from RTK
+      await updateCartItem({
+        cartItemId: id,
+        quantity: Math.max(1, newQuantity),
+      });
+    } catch (error) {
+      console.error("Failed to update cart item", error);
+    }
   };
+  // Tyler's code
+  // const updateQuantity = (id, newQuantity) => {
+  //   setCart((prevCart) =>
+  //     prevCart.map((item) =>
+  //       item.id === id ? { ...item, quantity: Math.max(1, newQuantity) } : item
+  //     )
+  //   );
+  // };
 
   // Remove item from cart
-  const removeItem = (id) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+  const removeItem = async (id) => {
+    try {
+      // Call the remove cart item mutation from RTK
+      await removeCartItem(id);
+    } catch (error) {
+      console.error("Failed to remove cart item", error);
+    }
   };
+  // Tyler's code
+  // const removeItem = (id) => {
+  //   setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+  // };
 
   // Calculate total price
   const calculateTotal = () =>
     cart.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  // Handle checkout
+  const handleCheckout = async () => {
+    try {
+      // call newOrder from RTK
+      await newOrder({ items: cart });
+      // Set orderPlaced to true upon successful order
+      setOrderPlaced(true);
+    } catch (error) {
+      console.error("Failed to place order", error);
+      alert("Failed to place order");
+    }
+  };
+
+  // added isLoading to show user when it's loading
+  if (isLoading) {
+    return <CircularProgress />;
+  }
+
+  // added an error message
+  if (error) {
+    return <Typography variant="h6">Failed to load cart items.</Typography>;
+  }
+
+  // if order is successful, added display message
+  if (orderPlaced) {
+    return (
+      <Box sx={{ pt: { xs: "15rem", md: "5rem" }, textAlign: "center" }}>
+        <Typography variant="h4" gutterBottom>
+          Order Successfully Placed!
+        </Typography>
+        <Typography variant="body1">
+          Thank you for your purchase. Your order is being processed.
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ marginTop: "20px" }}
+          onClick={() => setOrderPlaced(false)} //reset to view cart and continue shopping
+        >
+          Continue Shopping
+        </Button>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ pt: { xs: "15rem", md: "5rem" } }}>
@@ -100,6 +188,7 @@ const CheckoutCart = () => {
               variant="contained"
               color="primary"
               sx={{ marginTop: "10px" }}
+              onClick={handleCheckout}
             >
               Proceed to Checkout
             </Button>

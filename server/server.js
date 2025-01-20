@@ -14,12 +14,12 @@ app.use(express.json());
 app.use(require("morgan")("dev"));
 app.use(cookieParser());
 
-// // logger middleware
-// app.use((req, res, next) => {
-//   req.time = new Date(Date.now()).toString();
-//   console.log("INFO: ", req.method, req.hostname, req.path, req.time, req.body);
-//   next();
-// });
+// logger middleware
+app.use((req, res, next) => {
+  req.time = new Date(Date.now()).toString();
+  console.log("INFO: ", req.method, req.hostname, req.path, req.time, req.body, req.cookies);
+  next();
+});
 
 // CORS middleware
 app.use(cors({
