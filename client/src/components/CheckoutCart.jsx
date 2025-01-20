@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Typography,
@@ -13,21 +13,67 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import {
   useMyCartItemsQuery,
-  useNewOrderMutation,
   useRemoveCartItemMutation,
   useUpdateCartItemMutation,
-} from "../redux/user/userApi";
+} from "../redux/cart/cartApi";
+import { useNewOrderMutation } from "../redux/user/userApi";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  removeItemFromGuestCart,
+  setGuestCartItems,
+  updateGuestCartItem,
+} from "../redux/cart/cartSlice";
 
 const CheckoutCart = () => {
+  const isFirstRender = useRef(true);
+  const dispatch = useDispatch(); // to access cartSlice from RTK
+
+  // check if user is logged in by accessing authSlice from redux
+  const user = useSelector((state) => state.auth.user);
+  // access guestCart from Redux state
+  const guestCart = useSelector((state) => state.cart.guestCart);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      if (!user) {
+        // Initialize guest cart to empty
+        dispatch(setGuestCartItems([]));
+      }
+    }
+  }, [user, dispatch]); // added dependencies to make sure it only runs once when they change.
+
   // RTK Query Fetch cart items
-  const { data = [], isLoading, error, refetch } = useMyCartItemsQuery();
-  // console.log(data);
-  // try to access the array of cart items from the response object from the backend
-  const cart = Array.isArray(data) ? data : []; // check if data is array and set it to cart. if not, set it to empty array
-  // console.log(cart);
-  Object.keys(data).forEach((key) => {
-    cart.push(data[key]);
+  const {
+    data = [],
+    isLoading,
+    error,
+    refetch,
+  } = useMyCartItemsQuery(undefined, {
+    // skip the call if they aren't logged in
+    skip: !user,
   });
+  // console.log(data);
+  const [shouldRefetch, setShouldRefetch] = useState(false);
+
+  // Initialize cart as empty array
+  let cart = [];
+
+  // If the user is logged in, use the data from the backend
+  if (user) {
+    // Check if the data is an array and set it to cart, otherwise initialize as an empty array
+    cart = Array.isArray(data) ? data : [];
+
+    // If data is not an array, attempt to push its values into the cart array
+    if (!Array.isArray(data)) {
+      Object.keys(data).forEach((key) => {
+        cart.push(data[key]);
+      });
+    }
+  } else {
+    // If the user is not logged in, use the guest cart from the Redux state
+    cart = guestCart;
+  }
   // console.log(cart);
 
   const [updateCartItem] = useUpdateCartItemMutation();
@@ -37,21 +83,30 @@ const CheckoutCart = () => {
 
   // Refresh the cart data after adding or updating items
   useEffect(() => {
-    refetch();
-  }, [cart]);
+    // console.log("Is Logged In:", user);
+    if (user && shouldRefetch) {
+      refetch();
+      setShouldRefetch(false); //reset the trigger once it refreshes the cart
+    }
+  }, [user, shouldRefetch, refetch]);
 
   // Update quantity
   const updateQuantity = async (id, newQuantity) => {
-    try {
-      // Call the update cart item mutation from RTK
-      await updateCartItem({
-        cartItemId: id,
-        quantity: Math.max(1, newQuantity),
-      });
-      //Refresh the cart
-      refetch();
-    } catch (error) {
-      console.error("Failed to update cart item", error);
+    if (user) {
+      try {
+        // Call the update cart item mutation from RTK
+        await updateCartItem({
+          cartItemId: id,
+          quantity: Math.max(1, newQuantity),
+        });
+        //Refresh the cart
+        setShouldRefetch(true);
+      } catch (error) {
+        console.error("Failed to update cart item", error);
+      }
+    } else {
+      // update guest cart items if user not logged in
+      dispatch(updateGuestCartItem({ id, quantity: Math.max(1, newQuantity) }));
     }
   };
   // Tyler's code
@@ -65,13 +120,18 @@ const CheckoutCart = () => {
 
   // Remove item from cart
   const removeItem = async (id) => {
-    try {
-      // Call the remove cart item mutation from RTK
-      await removeCartItem(id);
-      // refresh the cart
-      refetch();
-    } catch (error) {
-      console.error("Failed to remove cart item", error);
+    if (user) {
+      try {
+        // Call the remove cart item mutation from RTK
+        await removeCartItem(id);
+        // refresh the cart
+        setShouldRefetch(true);
+      } catch (error) {
+        console.error("Failed to remove cart item", error);
+      }
+    } else {
+      // remove guest cart item if not logged in
+      dispatch(removeItemFromGuestCart(id));
     }
   };
   // Tyler's code
@@ -93,11 +153,20 @@ const CheckoutCart = () => {
       await newOrder({ items: cart });
       // Set orderPlaced to true upon successful order
       setOrderPlaced(true);
+      // Clear the user cart after checking out
+      dispatch(clearUserCart());
     } catch (error) {
       console.error("Failed to place order", error);
       alert("Failed to place order");
     }
   };
+
+  // Clear guest cart after order placement
+  useEffect(() => {
+    if (orderPlaced && !user) {
+      dispatch(clearGuestCart());
+    }
+  }, [orderPlaced, user, dispatch]);
 
   // added isLoading to show user when it's loading
   if (isLoading) {
