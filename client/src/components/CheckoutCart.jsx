@@ -15,6 +15,7 @@ import {
   useMyCartItemsQuery,
   useRemoveCartItemMutation,
   useUpdateCartItemMutation,
+  useDeleteCartMutation,
 } from "../redux/cart/cartApi";
 import { useNewOrderMutation } from "../redux/user/userApi";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,16 +34,6 @@ const CheckoutCart = () => {
   // access guestCart from Redux state
   const guestCart = useSelector((state) => state.cart.guestCart);
 
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      if (!user) {
-        // Initialize guest cart to empty
-        dispatch(setGuestCartItems([]));
-      }
-    }
-  }, [user, dispatch]); // added dependencies to make sure it only runs once when they change.
-
   // RTK Query Fetch cart items
   const {
     data = [],
@@ -55,6 +46,21 @@ const CheckoutCart = () => {
   });
   // console.log(data);
   const [shouldRefetch, setShouldRefetch] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [updateCartItem] = useUpdateCartItemMutation();
+  const [removeCartItem] = useRemoveCartItemMutation();
+  const [deleteCart] = useDeleteCartMutation();
+  const [newOrder] = useNewOrderMutation();
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      if (!user) {
+        // Initialize guest cart to empty
+        dispatch(setGuestCartItems([]));
+      }
+    }
+  }, [user, guestCart, data, dispatch]); // added dependencies to make sure it only runs once when they change.
 
   // Initialize cart as empty array
   let cart = [];
@@ -76,11 +82,6 @@ const CheckoutCart = () => {
   }
   // console.log(cart);
 
-  const [updateCartItem] = useUpdateCartItemMutation();
-  const [removeCartItem] = useRemoveCartItemMutation();
-  const [newOrder] = useNewOrderMutation();
-  const [orderPlaced, setOrderPlaced] = useState(false);
-
   // Refresh the cart data after adding or updating items
   useEffect(() => {
     // console.log("Is Logged In:", user);
@@ -88,7 +89,7 @@ const CheckoutCart = () => {
       refetch();
       setShouldRefetch(false); //reset the trigger once it refreshes the cart
     }
-  }, [user, shouldRefetch, refetch]);
+  }, [user, shouldRefetch, data, refetch]);
 
   // Update quantity
   const updateQuantity = async (id, newQuantity) => {
@@ -141,20 +142,26 @@ const CheckoutCart = () => {
 
   // Calculate total price
   const calculateTotal = () =>
-    cart.reduce(
-      (total, item) => total + `${Number(item.product.price)}` * item.quantity,
-      0
-    ); //Andrew changed item.price to item.product.price and to a number
+    cart.reduce((total, item) => {
+      const price = user ? item.product?.price : item.price;
+      return total + (Number(price) || 0) * item.quantity;
+    }, 0); //Andrew changed item.price to item.product.price and to a number
 
   // Handle checkout
   const handleCheckout = async () => {
     try {
-      // call newOrder from RTK
-      await newOrder({ items: cart });
-      // Set orderPlaced to true upon successful order
-      setOrderPlaced(true);
-      // Clear the user cart after checking out
-      dispatch(clearUserCart());
+      if (user) {
+        // call newOrder from RTK
+        // await newOrder({ items: cart });
+        // Set orderPlaced to true upon successful order
+        setOrderPlaced(true);
+        // Clear the user cart after checking out
+        await deleteCart();
+      }
+      // Clear the guest cart in the frontend state
+      if (!user) {
+        dispatch(clearGuestCart());
+      }
     } catch (error) {
       console.error("Failed to place order", error);
       alert("Failed to place order");
@@ -213,56 +220,66 @@ const CheckoutCart = () => {
       ) : (
         <Box sx={{ paddingX: 20 }}>
           {/* List of Cart Items */}
-          {cart.map((item) => (
-            <Card
-              key={item.id}
-              sx={{
-                marginBottom: "15px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "10px",
-              }}
-            >
-              <CardContent sx={{ flex: "1" }}>
-                {/* Andrew - added img and name to cart display */}
-                <img
-                  src={item.product.image} // Assuming item.product.image contains the image URL
-                  alt={item.product.name} // Assuming item.product.name contains the product name
-                  style={{ width: "50px", height: "50px", marginRight: "10px" }}
-                />
-                {/* Display Product Name and Price */}
-                {/* Andrew - added product name to display */}
-                {/* Andrew - changed item.price to item.product.price and to a number */}
-                <Box>
-                  <Typography variant="h6">{item.product.name}</Typography>
-                  <Typography variant="body2">
-                    Price: ${Number(item.product.price).toFixed(2)}
-                  </Typography>
+          {cart.map((item) => {
+            const image = user ? item.product.image : item.image;
+            const name = user ? item.product.name : item.name;
+            const price = user ? item.product.price : item.price;
+
+            return (
+              <Card
+                key={item.id}
+                sx={{
+                  marginBottom: "15px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "10px",
+                }}
+              >
+                <CardContent sx={{ flex: "1" }}>
+                  {/* Andrew - added img and name to cart display */}
+                  <img
+                    src={image} // Assuming item.product.image contains the image URL
+                    alt={name} // Assuming item.product.name contains the product name
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      marginRight: "10px",
+                    }}
+                  />
+                  {/* Display Product Name and Price */}
+                  {/* Andrew - added product name to display */}
+                  {/* Andrew - changed item.price to item.product.price and to a number */}
+                  <Box>
+                    <Typography variant="h6">{name}</Typography>
+                    <Typography variant="body2">
+                      Price: ${Number(price).toFixed(2)}
+                    </Typography>
+                  </Box>
+                </CardContent>
+
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  {/* Quantity Modifier */}
+                  <TextField
+                    type="number"
+                    variant="outlined"
+                    size="small"
+                    value={item.quantity}
+                    onChange={(e) =>
+                      updateQuantity(item.id, parseInt(e.target.value) || 1)
+                    }
+                    sx={{ width: "70px", marginRight: "10px" }}
+                    inputProps={{ min: 1 }}
+                  />
+
+                  {/* Remove Button */}
+                  <IconButton color="error" onClick={() => removeItem(item.id)}>
+                    <DeleteIcon />
+                  </IconButton>
                 </Box>
-              </CardContent>
-
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                {/* Quantity Modifier */}
-                <TextField
-                  type="number"
-                  variant="outlined"
-                  size="small"
-                  value={item.quantity}
-                  onChange={(e) =>
-                    updateQuantity(item.id, parseInt(e.target.value) || 1)
-                  }
-                  sx={{ width: "70px", marginRight: "10px" }}
-                  inputProps={{ min: 1 }}
-                />
-
-                {/* Remove Button */}
-                <IconButton color="error" onClick={() => removeItem(item.id)}>
-                  <DeleteIcon />
-                </IconButton>
-              </Box>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
 
           {/* Total Price */}
           <Box sx={{ marginTop: "20px", textAlign: "right" }}>

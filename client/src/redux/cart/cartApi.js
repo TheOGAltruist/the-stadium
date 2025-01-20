@@ -2,10 +2,12 @@
 import { rootApi } from "../api/rootApi";
 
 export const cartApi = rootApi.injectEndpoints({
+  tagTypes: ["Cart"],
   endpoints: (builder) => ({
     // Fetch cart
     myCartItems: builder.query({
       query: () => "/me/cart",
+      providesTags: ["Cart"],
     }),
     // Add cart item
     addCartItem: builder.mutation({
@@ -14,6 +16,7 @@ export const cartApi = rootApi.injectEndpoints({
         method: "POST",
         body: { quantity },
       }),
+      invalidatesTags: ["Cart"],
     }),
     // Remove cart item
     removeCartItem: builder.mutation({
@@ -36,6 +39,7 @@ export const cartApi = rootApi.injectEndpoints({
         url: "/me/cart",
         method: "DELETE",
       }),
+      invalidatesTags: ["Cart"],
     }),
   }),
 });
