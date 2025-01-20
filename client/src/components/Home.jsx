@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Box,
   Grid,
@@ -159,8 +160,14 @@ const Home = () => {
     )
     .sort((a, b) => (sortBy === "low" ? a.price - b.price : b.price - a.price));
 
+  // using isAuthenticated to check for loggedin status for Wishlist button in product modal
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  // show messages for wishlist button click
+  const [wishlistMessage, setWishlistMessage] = useState("");
+
   return (
-    <Box sx={{ pt: { xs: "15rem", md: "8rem" } }}>
+    <Box className="main-box">
       <Box
         sx={{
           backgroundColor: "#3b3b3b", // Background color
@@ -191,7 +198,7 @@ const Home = () => {
             "& .MuiOutlinedInput-root": {
               color: "#edebeb", // Text color
               "& fieldset": {
-                borderColor: "#3b3b3b", // Default border color
+                borderColor: "#edebeb", // Default border color
               },
               "&:hover fieldset": {
                 borderColor: "#edebeb", // Hover border color
@@ -223,7 +230,7 @@ const Home = () => {
             "& .MuiOutlinedInput-root": {
               color: "#edebeb", // Text color
               "& fieldset": {
-                borderColor: "#3b3b3b", // Default border color
+                borderColor: "#edebeb", // Default border color
               },
               "&:hover fieldset": {
                 borderColor: "#edebeb", // Hover border color
@@ -241,12 +248,13 @@ const Home = () => {
           }}
         >
           {/* Filter: Tag */}
-          <FormControl sx={{ minWidth: 150 }}>
+          <FormControl sx={{ minWidth: 200 }}>
             <InputLabel>Tag</InputLabel>
             <Select
               name="tag"
               value={filters.tag}
               onChange={handleFilterChange}
+              label="Tag"
             >
               <MenuItem value="">All</MenuItem>
               <MenuItem value="sports">Sports</MenuItem>
@@ -259,12 +267,13 @@ const Home = () => {
           </FormControl>
 
           {/* Filter: Category */}
-          <FormControl sx={{ minWidth: 150 }}>
+          <FormControl sx={{ minWidth: 200 }}>
             <InputLabel>Category</InputLabel>
             <Select
               name="category"
               value={filters.category}
               onChange={handleFilterChange}
+              label="Category"
             >
               <MenuItem value="">All</MenuItem>
               <MenuItem value="Equipment">Equipment</MenuItem>
@@ -277,9 +286,9 @@ const Home = () => {
           </FormControl>
 
           {/* Sort By Price */}
-          <FormControl sx={{ minWidth: 150 }}>
+          <FormControl sx={{ minWidth: 200 }}>
             <InputLabel>Sort By</InputLabel>
-            <Select value={sortBy} onChange={handleSortChange}>
+            <Select value={sortBy} onChange={handleSortChange} label="Sort By">
               <MenuItem value="low">Price: Low to High</MenuItem>
               <MenuItem value="high">Price: High to Low</MenuItem>
             </Select>
@@ -368,9 +377,17 @@ const Home = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() =>
-                  alert(`Added to Wishlist: ${selectedProduct.name}`)
-                }
+                onClick={() => {
+                  if (isAuthenticated) {
+                    setWishlistMessage(
+                      `Added to Wishlist: ${selectedProduct.name}`
+                    );
+                  } else {
+                    setWishlistMessage(
+                      "Please log in to add items to your wishlist."
+                    );
+                  }
+                }}
               >
                 Add to Wishlist
               </Button>
@@ -384,6 +401,21 @@ const Home = () => {
                 Add to Cart
               </Button>
             </Box>
+            {wishlistMessage && (
+              <Box
+                sx={{
+                  marginTop: "20px",
+                  padding: "10px",
+                  backgroundColor: isAuthenticated ? "#d4edda" : "#f8d7da",
+                  color: isAuthenticated ? "#155724" : "#721c24",
+                  border: "1px solid",
+                  borderColor: isAuthenticated ? "#c3e6cb" : "#f5c6cb",
+                  borderRadius: "4px",
+                }}
+              >
+                {wishlistMessage}
+              </Box>
+            )}
           </DialogContent>
           <DialogActions sx={{ backgroundColor: "#3b3b3b" }}>
             <Button

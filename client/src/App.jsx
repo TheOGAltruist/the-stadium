@@ -7,7 +7,7 @@ import Home from "./components/Home.jsx";
 import About from "./components/About.jsx";
 import Checkout from "./components/CheckoutCart.jsx";
 import Navbar from "./components/Navbar.jsx";
-import UserAccount from "./components/userAccount.jsx";
+import UserAccount from "./components/UserAccount.jsx";
 import AdminAccount from "./components/AdminAccount.jsx";
 import UserHome from "./components/UserHome.jsx";
 import UserOrderHistory from "./components/UserOrderHistory.jsx";

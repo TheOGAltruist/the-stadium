@@ -173,7 +173,7 @@ const UserOrderHistory = () => {
   };
 
   return (
-    <Box sx={{ pt: { xs: "15rem", md: "5rem" } }} align="center">
+    <Box className="main-box" align="center" px={20}>
       <Typography variant="h4" gutterBottom>
         Your Orders
       </Typography>
@@ -251,7 +251,9 @@ const UserOrderHistory = () => {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle>Order Details</DialogTitle>
+        <DialogTitle sx={{ backgroundColor: "#8D0801", color: "#edebeb" }}>
+          Order Details
+        </DialogTitle>
         <DialogContent>
           {selectedOrder && (
             <>

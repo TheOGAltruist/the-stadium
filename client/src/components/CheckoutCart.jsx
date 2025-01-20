@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -19,28 +19,26 @@ import {
 } from "../redux/user/userApi";
 
 const CheckoutCart = () => {
-  // Mock cart data
-  // const [cart, setCart] = useState([
-  //   { id: 1, name: "Basketball", price: 29.99, quantity: 1 },
-  //   { id: 2, name: "Soccer Ball", price: 19.99, quantity: 2 },
-  //   { id: 3, name: "Running Shoes", price: 59.99, quantity: 1 },
-  // ]);
-
   // RTK Query Fetch cart items
-  const { data, isLoading, error } = useMyCartItemsQuery();
-  console.log(data);
+  const { data = [], isLoading, error, refetch } = useMyCartItemsQuery();
+  // console.log(data);
   // try to access the array of cart items from the response object from the backend
-  let cart = [];
+  const cart = Array.isArray(data) ? data : []; // check if data is array and set it to cart. if not, set it to empty array
+  // console.log(cart);
   Object.keys(data).forEach((key) => {
     cart.push(data[key]);
   });
-  console.log(cart);
-  
+  // console.log(cart);
 
   const [updateCartItem] = useUpdateCartItemMutation();
   const [removeCartItem] = useRemoveCartItemMutation();
   const [newOrder] = useNewOrderMutation();
   const [orderPlaced, setOrderPlaced] = useState(false);
+
+  // Refresh the cart data after adding or updating items
+  useEffect(() => {
+    refetch();
+  }, [cart]);
 
   // Update quantity
   const updateQuantity = async (id, newQuantity) => {
@@ -50,6 +48,8 @@ const CheckoutCart = () => {
         cartItemId: id,
         quantity: Math.max(1, newQuantity),
       });
+      //Refresh the cart
+      refetch();
     } catch (error) {
       console.error("Failed to update cart item", error);
     }
@@ -68,6 +68,8 @@ const CheckoutCart = () => {
     try {
       // Call the remove cart item mutation from RTK
       await removeCartItem(id);
+      // refresh the cart
+      refetch();
     } catch (error) {
       console.error("Failed to remove cart item", error);
     }
@@ -79,7 +81,10 @@ const CheckoutCart = () => {
 
   // Calculate total price
   const calculateTotal = () =>
-    cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    cart.reduce(
+      (total, item) => total + `${Number(item.product.price)}` * item.quantity,
+      0
+    ); //Andrew changed item.price to item.product.price and to a number
 
   // Handle checkout
   const handleCheckout = async () => {
@@ -127,7 +132,7 @@ const CheckoutCart = () => {
   }
 
   return (
-    <Box sx={{ pt: { xs: "15rem", md: "5rem" } }}>
+    <Box className="main-box">
       <Typography variant="h4" textAlign="center" gutterBottom>
         <ShoppingCartIcon fontSize="large" /> Checkout Cart
       </Typography>
@@ -137,7 +142,7 @@ const CheckoutCart = () => {
           Your cart is empty.
         </Typography>
       ) : (
-        <Box>
+        <Box sx={{ paddingX: 20 }}>
           {/* List of Cart Items */}
           {cart.map((item) => (
             <Card
@@ -151,10 +156,21 @@ const CheckoutCart = () => {
               }}
             >
               <CardContent sx={{ flex: "1" }}>
-                <Typography variant="h6">{item.name}</Typography>
-                <Typography variant="body2">
-                  Price: ${item.price.toFixed(2)}
-                </Typography>
+                {/* Andrew - added img and name to cart display */}
+                <img
+                  src={item.product.image} // Assuming item.product.image contains the image URL
+                  alt={item.product.name} // Assuming item.product.name contains the product name
+                  style={{ width: "50px", height: "50px", marginRight: "10px" }}
+                />
+                {/* Display Product Name and Price */}
+                {/* Andrew - added product name to display */}
+                {/* Andrew - changed item.price to item.product.price and to a number */}
+                <Box>
+                  <Typography variant="h6">{item.product.name}</Typography>
+                  <Typography variant="body2">
+                    Price: ${Number(item.product.price).toFixed(2)}
+                  </Typography>
+                </Box>
               </CardContent>
 
               <Box sx={{ display: "flex", alignItems: "center" }}>

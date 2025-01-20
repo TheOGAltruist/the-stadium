@@ -95,6 +95,7 @@ const updateProduct = async (req, res, next) => {
       message: "Product updated successfully",
     });
   } catch (error) {
+    console.log(error)
     next({ message: "Failed to update product" });
   }
 };
@@ -106,6 +107,7 @@ const deleteProduct = async (req, res, next) => {
     await prisma.product.delete({ where: { id } });
     res.status(204).send();
   } catch (error) {
+    console.log(error)
     next({ message: "Failed to delete product" });
   }
 };
