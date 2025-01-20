@@ -24,10 +24,12 @@ import {
   setGuestCartItems,
   updateGuestCartItem,
 } from "../redux/cart/cartSlice";
+import { useNavigate } from "react-router-dom";
 
 const CheckoutCart = () => {
   const isFirstRender = useRef(true);
   const dispatch = useDispatch(); // to access cartSlice from RTK
+  const navigate = useNavigate();
 
   // check if user is logged in by accessing authSlice from redux
   const user = useSelector((state) => state.auth.user);
@@ -56,11 +58,14 @@ const CheckoutCart = () => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       if (!user) {
+        alert("Please log in/register to view your cart");
+        // redirect to login page
+        navigate("/account");
         // Initialize guest cart to empty
         dispatch(setGuestCartItems([]));
       }
     }
-  }, [user, guestCart, data, dispatch]); // added dependencies to make sure it only runs once when they change.
+  }, [user, guestCart, dispatch]); // added dependencies to make sure it only runs once when they change.
 
   // Initialize cart as empty array
   let cart = [];
@@ -89,7 +94,7 @@ const CheckoutCart = () => {
       refetch();
       setShouldRefetch(false); //reset the trigger once it refreshes the cart
     }
-  }, [user, shouldRefetch, data, refetch]);
+  }, [user, shouldRefetch, refetch]);
 
   // Update quantity
   const updateQuantity = async (id, newQuantity) => {
