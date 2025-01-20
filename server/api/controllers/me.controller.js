@@ -161,15 +161,35 @@ const myCartItems = async (req, res, next) => {
 //Add item to cart
 const addCartItem = async (req, res, next) => {
     try {
-        const response = await prisma.cartItem.create({
-            data:{
+        const cartItems = await prisma.cartItem.findMany({
+            where: {
                 user_id: req.user.id,
                 product_id: req.params.productId,
-                quantity: req.body.quantity
             }
         })
 
-        res.status(204).send()
+        if(cartItems.length === 0){
+            const response = await prisma.cartItem.create({
+                data:{
+                    user_id: req.user.id,
+                    product_id: req.params.productId,
+                    quantity: req.body.quantity
+                }
+            })
+
+            res.status(204).send()
+        } else {
+            const response = await prisma.cartItem.update({
+                where: {
+                    id: cartItems[0].id,
+                },
+                data:{
+                    quantity: cartItems[0].quantity + req.body.quantity
+                }
+            })
+
+            res.status(204).send()
+        }
     } catch (error) {
         next(error)
     }
