@@ -20,6 +20,7 @@ import {
 import { useNewOrderMutation } from "../redux/user/userApi";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  clearGuestCart,
   removeItemFromGuestCart,
   setGuestCartItems,
   updateGuestCartItem,
@@ -36,6 +37,7 @@ const CheckoutCart = () => {
   // access guestCart from Redux state
   const guestCart = useSelector((state) => state.cart.guestCart);
 
+  // console.log("Guest Cart:", guestCart);
   // RTK Query Fetch cart items
   const {
     data = [],
@@ -57,15 +59,19 @@ const CheckoutCart = () => {
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
-      if (!user) {
-        alert("Please log in/register to view your cart");
-        // redirect to login page
-        navigate("/account");
+      if (!user && guestCart.length === 0) {
+        // alert("Please log in/register to view your cart");
+        // // redirect to login page
+        // navigate("/account");
         // Initialize guest cart to empty
         dispatch(setGuestCartItems([]));
       }
     }
   }, [user, guestCart, dispatch]); // added dependencies to make sure it only runs once when they change.
+
+  // useEffect(() => {
+  //   console.log("Guest Cart in CheckoutCart:", guestCart);
+  // }, [guestCart]);
 
   // Initialize cart as empty array
   let cart = [];
@@ -165,6 +171,7 @@ const CheckoutCart = () => {
       }
       // Clear the guest cart in the frontend state
       if (!user) {
+        setOrderPlaced(true);
         dispatch(clearGuestCart());
       }
     } catch (error) {

@@ -125,6 +125,7 @@ const Home = () => {
             quantity: 1,
           })
         );
+        // console.log("Guest Cart after adding item:", guestCart);
       }
       setSnackbarMessage(`Added to Guest Cart: ${productName}`);
       setSnackbarOpen(true);
@@ -330,7 +331,14 @@ const Home = () => {
                       size="small"
                       variant="contained"
                       color="secondary"
-                      onClick={() => handleAddToCart(product.id, product.name, product.image, product.price)} //added product.id, name, and image
+                      onClick={() =>
+                        handleAddToCart(
+                          product.id,
+                          product.name,
+                          product.image,
+                          product.price
+                        )
+                      } //added product.id, name, and image
                     >
                       Add to Cart
                     </Button>
