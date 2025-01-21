@@ -227,7 +227,7 @@ const ProductManagement = () => {
   const handleDeleteProduct = async (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        console.log(productId);
+        // console.log(productId);
 
         // Call the deleteProduct mutation
         await deleteProduct(productId).unwrap();
