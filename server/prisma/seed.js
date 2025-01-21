@@ -1,6 +1,7 @@
 const prisma = require(".");
 const { faker } = require("@faker-js/faker");
 const bcrypt = require("bcrypt");
+const { nanoid } = require("nanoid");
 
 // const seed = async () => {
 
@@ -14,40 +15,7 @@ const bcrypt = require("bcrypt");
 //   });
 
 async function seed() {
-  // Create some users
-  const user1 = await prisma.user.create({
-    data: {
-      firstname: "John",
-      lastname: "Doe",
-      username: "johndoe",
-      password: "securepassword",
-      email: "john.doe@example.com",
-      isAdmin: true,
-    },
-  });
-
-  const user2 = await prisma.user.create({
-    data: {
-      firstname: "Jane",
-      lastname: "Smith",
-      username: "janesmith",
-      password: "securepassword",
-      email: "jane.smith@example.com",
-    },
-  });
-
-  // Create a payment method
-  const paymentMethod = await prisma.paymentMethod.create({
-    data: {
-      name: "John's Credit Card",
-      user: {
-        connect: { id: user1.id },
-      },
-      type: "CreditCard",
-    },
-  });
-
-  // Create some products
+  // Create products
   let products = [];
 
   for (let index = 0; index < 100; index++) {
@@ -56,8 +24,8 @@ async function seed() {
       name: faker.commerce.product(),
       description: faker.commerce.productDescription(),
       price: faker.commerce.price(),
-      quantity: faker.number.int(10, 100),
-      skuId: faker.commerce.isbn(8),
+      quantity: Math.floor(Math.random() * 100) + 1,
+      skuId: `SKU${Math.round(Math.random() * 10000000)}`,
       image: faker.image.url(),
     };
 
@@ -71,141 +39,100 @@ async function seed() {
     },
   });
 
-  const product1 = await prisma.product.create({
-    data: {
-      name: "Product 1",
-      description: "Description for product 1",
-      price: 19.99,
-      quantity: 100,
-      skuId: "SKU001",
-      image: "https://via.placeholder.com/150",
-    },
-  });
+  //Create users
+  let users = [];
 
-  const product2 = await prisma.product.create({
-    data: {
-      name: "Product 2",
-      description: "Description for product 2",
-      price: 29.99,
-      quantity: 200,
-      skuId: "SKU002",
-      image: "https://via.placeholder.com/150",
-    },
-  });
+  for (let index = 0; index < 20; index++) {
+    const admin = [true, false];
+    let user = {};
+    user = {
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
+      username: `${faker.person.firstName()}${Math.round(
+        Math.random() * 1000
+      )}`,
+      password: await bcrypt.hash(
+        await nanoid(20),
+        Math.floor(Math.random() * 10) + 1
+      ),
+      email: `${faker.person.firstName()}.${faker.person.lastName()}@${faker.internet.domainName()}`,
+      isAdmin: admin[Math.round(Math.random())],
+    };
 
-  // Create some categories
-  await prisma.category.create({
-    data: {
-      name: "Electronics",
-      product: {
-        connect: { id: product1.id },
-      },
-    },
-  });
+    users.push(user);
+  }
 
-  await prisma.category.create({
-    data: {
-      name: "Books",
-      product: {
-        connect: { id: product2.id },
-      },
+  const createUsers = await prisma.user.createManyAndReturn({
+    data: users,
+    select: {
+      id: true,
     },
   });
+  //Create payment methods
+  const methods = ["CreditCard", "DebitCard", "Stripe", "Paypal"];
+  for (x = 0; x < methods.length; x++) {
+    for (y = 0; y < createUsers.length; y++) {
+      const createPaymentMethod = await prisma.paymentMethod.create({
+        data: {
+          name: methods[x],
+          user_id: createUsers[y].id,
+          type: methods[x],
+        },
+      });
 
-  // Create some tags
-  await prisma.tag.create({
-    data: {
-      name: "New Arrival",
-      product: {
-        connect: { id: product1.id },
-      },
-    },
-  });
+      //Create Orders
+      const createOrders = await prisma.order.create({
+        data: {
+          order_id: Date.now().toString(),
+          user_id: createUsers[y].id,
+          paymentMethodId: createPaymentMethod.id,
+          status: "Created",
+        },
+      });
+    }
+  }
 
-  await prisma.tag.create({
-    data: {
-      name: "Best Seller",
-      product: {
-        connect: { id: product2.id },
-      },
-    },
-  });
+  //Create OrderItems
+  const allOrders = await prisma.order.findMany();
 
-  // Create a review
-  await prisma.review.create({
-    data: {
-      text: "Great product!",
-      rating: 4.5,
-      product: {
-        connect: { id: product1.id },
+  for (z = 0; z < allOrders.length; z++) {
+    const orderItem = await prisma.orderItem.create({
+      data: {
+        order_id: allOrders[z].order_id,
+        product_id: createProducts[Math.floor(Math.random() * 100)].id,
+        quantity: Math.floor(Math.random() * 10) + 1,
       },
-      user: {
-        connect: { username: user1.username },
-      },
-    },
-  });
+    });
+  }
 
-  // Create a wishlist
-  const wishlist = await prisma.wishlist.create({
-    data: {
-      name: "My Wishlist",
-      owner: {
-        connect: { id: user2.id },
+  //Create Tags
+  const tags = ["Sports", "Indoor", "Outdoor", "Footwear", "Running", "Tennis"];
+  for (a = 0; a < createProducts.length; a++) {
+    const createTag = await prisma.tag.create({
+      data: {
+        name: tags[Math.floor(Math.random() * 6)],
+        product_id: createProducts[a].id,
       },
-    },
-  });
+    });
+  }
 
-  // Add items to the wishlist
-  await prisma.wishlistItem.create({
-    data: {
-      product: {
-        connect: { id: product1.id },
+  //Create categories
+  const categories = [
+    "Equipment",
+    "Basketball",
+    "Soccer",
+    "Shoes",
+    "Running",
+    "Tennis",
+  ];
+  for (a = 0; a < createProducts.length; a++) {
+    const createCategory = await prisma.category.create({
+      data: {
+        name: tags[Math.floor(Math.random() * 6)],
+        product_id: createProducts[a].id,
       },
-      wishlist: {
-        connect: { id: wishlist.id },
-      },
-    },
-  });
-
-  // Create a cart item
-  await prisma.cartItem.create({
-    data: {
-      user: {
-        connect: { id: user1.id },
-      },
-      product: {
-        connect: { id: product2.id },
-      },
-      quantity: 2,
-    },
-  });
-
-  // Create an order
-  const order = await prisma.order.create({
-    data: {
-      order_id: "ORDER001",
-      user: {
-        connect: { id: user1.id },
-      },
-      payment: {
-        connect: { id: "some-payment-method-id" }, // Ensure this ID exists or create a payment method first
-      },
-      status: "Pending",
-    },
-  });
-
-  // Add items to the order
-  await prisma.orderItem.create({
-    data: {
-      order: {
-        connect: { order_id: order.order_id },
-      },
-      product: {
-        connect: { id: product1.id },
-      },
-      quantity: 1,
-    },
-  });
+    });
+  }
 }
 
 seed()
