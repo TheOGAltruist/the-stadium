@@ -41,7 +41,7 @@ import { useNavigate } from "react-router-dom";
 const ProductManagement = () => {
   // Initialize the Product-related mutations and query
   const {
-    data: products,
+    data: products = [],
     isLoading,
     error,
     refetch,
@@ -57,6 +57,7 @@ const ProductManagement = () => {
   const [showProductForm, setShowProductForm] = useState(false);
   const [showTagCategoryForm, setShowTagCategoryForm] = useState(false); // removed from product form and creating separate form
   const [isEditMode, setIsEditMode] = useState(false); // New state for edit mode
+  const [searchQuery, setSearchQuery] = useState(""); //New state for search bar
   const [productData, setProductData] = useState({
     id: null,
     name: "",
@@ -89,6 +90,11 @@ const ProductManagement = () => {
       ...prevState,
       imageFile: file,
     }));
+  };
+
+  // handle the search query
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
   };
 
   //Validate URL input
@@ -335,6 +341,12 @@ const ProductManagement = () => {
       console.error("Failed to remove category", error);
     }
   };
+console.log(products);
+
+  // Filter products based on search query
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <Box className="main-box" align="center" px={20}>
@@ -389,6 +401,15 @@ const ProductManagement = () => {
             : "Manage Tags/Categories"}
         </Button>
       </Box>
+
+      {/* Added a Search Bar */}
+      <TextField
+        label="Search Products"
+        variant="outlined"
+        sx={{ mb: 3, width: "100%" }}
+        value={searchQuery}
+        onChange={handleSearch}
+      />
 
       {showTagCategoryForm && (
         <Box
@@ -667,7 +688,7 @@ const ProductManagement = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              products.map((product) => (
+              filteredProducts.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>${product.price}</TableCell>
