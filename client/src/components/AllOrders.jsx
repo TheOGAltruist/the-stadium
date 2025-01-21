@@ -19,122 +19,17 @@ import {
   useChangeOrderStatusMutation,
   useGetAllOrdersQuery,
 } from "../redux/admin/adminApi";
+import { useNavigate } from "react-router-dom";
 
 const AllOrders = () => {
   // const [orders, setOrders] = useState([]);
   // const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const { data: orders, isLoading, error } = useGetAllOrdersQuery();
+  const { data: orders = [], isLoading, error } = useGetAllOrdersQuery();
   const [changeOrderStatus] = useChangeOrderStatusMutation();
-
-  // // Mock order for development
-  // useEffect(() => {
-  //   const mockOrders = [
-  //     {
-  //       order_id: "12345",
-  //       created_at: "2025-01-01T00:00:00Z",
-  //       status: "Created",
-  //       user: "John Doe",
-  //       paymentMethod: "Credit Card",
-  //       orderItems: [
-  //         {
-  //           product: {
-  //             name: "Bowling Ball",
-  //             product_id: "BB123",
-  //             price: 97.1,
-  //             image: "https://via.placeholder.com/150",
-  //           },
-  //           quantity: 1,
-  //         },
-  //         {
-  //           product: {
-  //             name: "Fingerless Gloves",
-  //             product_id: "FG456",
-  //             price: 30.09,
-  //             image: "https://via.placeholder.com/150",
-  //           },
-  //           quantity: 1,
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       order_id: "67890",
-  //       created_at: "2025-02-15T00:00:00Z",
-  //       status: "Created",
-  //       user: "Jane Smith",
-  //       paymentMethod: "PayPal",
-  //       orderItems: [
-  //         {
-  //           product: {
-  //             name: "Tennis Racket",
-  //             product_id: "TR789",
-  //             price: 129.99,
-  //             image: "https://via.placeholder.com/150",
-  //           },
-  //           quantity: 1,
-  //         },
-  //         {
-  //           product: {
-  //             name: "Tennis Balls (3-pack)",
-  //             product_id: "TB101",
-  //             price: 15.49,
-  //             image: "https://via.placeholder.com/150",
-  //           },
-  //           quantity: 1,
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       order_id: "54321",
-  //       created_at: "2025-03-10T00:00:00Z",
-  //       status: "Created",
-  //       user: "Bob Johnson",
-  //       paymentMethod: "Debit Card",
-  //       orderItems: [
-  //         {
-  //           product: {
-  //             name: "Soccer Ball",
-  //             product_id: "SB234",
-  //             price: 37.99,
-  //             image: "https://via.placeholder.com/150",
-  //           },
-  //           quantity: 2,
-  //         },
-  //         {
-  //           product: {
-  //             name: "Shin Guards",
-  //             product_id: "SG567",
-  //             price: 41.99,
-  //             image: "https://via.placeholder.com/150",
-  //           },
-  //           quantity: 1,
-  //         },
-  //       ],
-  //     },
-  //   ];
-
-  //   const transformedOrders = mockOrders.map((order) => ({
-  //     orderNumber: order.order_id,
-  //     datePlaced: new Date(order.created_at).toLocaleDateString(),
-  //     totalPrice: `$${order.orderItems
-  //       .reduce((total, item) => total + item.product.price * item.quantity, 0)
-  //       .toFixed(2)}`,
-  //     status: order.status,
-  //     user: order.user,
-  //     paymentMethod: order.paymentMethod,
-  //     items: order.orderItems.map((item) => ({
-  //       name: item.product.name,
-  //       productId: item.product.product_id,
-  //       price: `$${(item.product.price * item.quantity).toFixed(2)}`,
-  //       quantity: item.quantity,
-  //       image: item.product.image || "https://via.placeholder.com/150",
-  //     })),
-  //   }));
-
-  //   setOrders(transformedOrders);
-  //   setLoading(false);
-  // }, []);
+  const navigate = useNavigate();
+  // console.log(orders);
 
   // Open dialog to view order details
   const handleViewDetails = (order) => {
@@ -192,6 +87,15 @@ const AllOrders = () => {
         All Orders
       </Typography>
 
+      <Button
+        variant="contained"
+        color="secondary"
+        sx={{ mr: 2 }}
+        onClick={() => navigate("/admin")}
+      >
+        Back to Dashboard
+      </Button>
+
       {isLoading ? (
         <CircularProgress />
       ) : error ? (
@@ -212,24 +116,27 @@ const AllOrders = () => {
                       marginBottom: "10px",
                     }}
                   >
+                    {/* Andrew - had to change orderNumber to order_id, etc. to match our data structure */}
                     {/* Order Info */}
                     <Typography variant="h6">
-                      <strong>Order #:</strong> {order.orderNumber}
+                      <strong>Order #:</strong> {order.order_id}
                     </Typography>
                     <Typography variant="body1">
-                      <strong>Date Placed:</strong> {order.datePlaced}
+                      <strong>Date Placed:</strong>{" "}
+                      {new Date(order.created_at).toLocaleDateString()}
                     </Typography>
-                    <Typography variant="body1">
+                    {/* <Typography variant="body1">
                       <strong>Total Price:</strong> {order.totalPrice}
-                    </Typography>
+                    </Typography> */}
                   </Box>
 
                   {/* User Info */}
                   <Typography variant="body1">
-                    <strong>User:</strong> {order.user}
+                    <strong>User:</strong> {order.user?.firstname}{" "}
+                    {order.user?.lastname}
                   </Typography>
                   <Typography variant="body1">
-                    <strong>Payment Method:</strong> {order.paymentMethod}
+                    <strong>Payment Method:</strong> {order.payment?.name}
                   </Typography>
 
                   {/* Order Status */}
@@ -256,7 +163,7 @@ const AllOrders = () => {
                           backgroundColor: "darkgoldenrod",
                         }}
                         onClick={() =>
-                          handleStatusUpdate(order.orderNumber, "Processing")
+                          handleStatusUpdate(order.order_id, "Processing")
                         }
                       >
                         Mark as Processing
@@ -271,7 +178,7 @@ const AllOrders = () => {
                             backgroundColor: "green",
                           }}
                           onClick={() =>
-                            handleStatusUpdate(order.orderNumber, "Completed")
+                            handleStatusUpdate(order.order_id, "Completed")
                           }
                         >
                           Mark as Completed
@@ -283,7 +190,7 @@ const AllOrders = () => {
                             backgroundColor: "firebrick",
                           }}
                           onClick={() =>
-                            handleStatusUpdate(order.orderNumber, "Cancelled")
+                            handleStatusUpdate(order.order_id, "Cancelled")
                           }
                         >
                           Cancel Order
@@ -301,7 +208,7 @@ const AllOrders = () => {
                       marginTop: "10px",
                     }}
                   >
-                    {order.items.map((item, idx) => (
+                    {order.orderItems?.map((item, idx) => (
                       <CardMedia
                         key={idx}
                         component="img"
@@ -312,8 +219,8 @@ const AllOrders = () => {
                           objectFit: "cover",
                           border: "1px solid #ccc",
                         }}
-                        image={item.image}
-                        alt={item.name}
+                        image={item.product?.image}
+                        alt={item.product?.name}
                       />
                     ))}
                   </Box>
@@ -346,19 +253,21 @@ const AllOrders = () => {
           {selectedOrder && (
             <>
               <Typography variant="h6" gutterBottom>
-                <strong>Order #:</strong> {selectedOrder.orderNumber}
+                <strong>Order #:</strong> {selectedOrder.order_id}
               </Typography>
               <Typography variant="body1">
-                <strong>Date Placed:</strong> {selectedOrder.datePlaced}
+                <strong>Date Placed:</strong>{" "}
+                {new Date(selectedOrder.created_at).toLocaleDateString()}
               </Typography>
-              <Typography variant="body1">
+              {/* <Typography variant="body1">
                 <strong>Total Price:</strong> {selectedOrder.totalPrice}
+              </Typography> */}
+              <Typography variant="body1">
+                <strong>User:</strong> {selectedOrder.user?.firstname}{" "}
+                {selectedOrder.user?.lastname}
               </Typography>
               <Typography variant="body1">
-                <strong>User:</strong> {selectedOrder.user}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Payment Method:</strong> {selectedOrder.paymentMethod}
+                <strong>Payment Method:</strong> {selectedOrder.payment?.name}
               </Typography>
               <Typography
                 variant="body1"
@@ -376,12 +285,12 @@ const AllOrders = () => {
                 Items:
               </Typography>
               <List>
-                {selectedOrder.items.map((item, index) => (
+                {selectedOrder.orderItems?.map((item, index) => (
                   <ListItem key={index} sx={{ alignItems: "flex-start" }}>
                     <CardMedia
                       component="img"
-                      image={item.image}
-                      alt={item.name}
+                      image={item.product?.image}
+                      alt={item.product?.name}
                       sx={{
                         width: "150px",
                         height: "150px",
@@ -391,11 +300,11 @@ const AllOrders = () => {
                       }}
                     />
                     <ListItemText
-                      primary={item.name}
+                      primary={item.product?.name}
                       secondary={
                         <>
-                          <div>Price: {item.price}</div>
-                          <div>Product ID: {item.productId}</div>
+                          <div>Price: {item.product?.price}</div>
+                          <div>Product ID: {item.product_id}</div>
                           <div>Quantity: {item.quantity}</div>
                         </>
                       }
