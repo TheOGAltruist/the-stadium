@@ -200,7 +200,7 @@ const CheckoutCart = () => {
   // if order is successful, added display message
   if (orderPlaced) {
     return (
-      <Box sx={{ pt: { xs: "15rem", md: "5rem" }, textAlign: "center" }}>
+      <Box className="main-box" sx={{ textAlign: "center" }}>
         <Typography variant="h4" gutterBottom>
           Order Successfully Placed!
         </Typography>
