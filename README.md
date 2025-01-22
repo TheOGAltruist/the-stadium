@@ -14,27 +14,44 @@ This application will be built using PERN stack
 - Prisma ORM for database management
 - React for the front-end
 - Express.js and Node.js for the back-end
-- Redux for state management
-- Cookies for saving token
+- Redux Toolkit (RTK) for state management
+- Cookies for saving/sending token from back-end
 
 #### Features
 
 - Authentication
 - Profile
 - Products
-- Cart
-- Guest Cart & Checkout
+- Persistent Cart & Checkout for logged-in users
+- Persistent Guest Cart & Checkout
 - Reviews
-- Comments
 - Payment Methods
 - Wishlist
 - Suggestions
 - Dynamic Search Bar
 - Filters (Tags and Categories)
 - CRUD functionality for admin (products, users, admins, etc)
-- CRUD functionality for users (profile, address, payment method, cart, reviews, comments)
+- CRUD functionality for users (profile, address, payment method, cart, reviews)
 
-##### App folder structure
+##### Important NOTES
+- Please note the project is split into two folders (client) and (server)
+- Please install the required packages/dependencies for the frontend and backend SEPARATELY
+    - "cd client" --> "npm install"
+    - "cd server" --> "npm install"
+- Please create a .env file in the server folder and put the following info in it
+    "cd server" --> "touch .env"
+        - DATABASE_URL = "postgres://neondb_owner:9oLTgAKvN7qR@ep-shrill-cherry-a59nyx3q-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require&connect_timeout=15"
+        - PORT=3000
+        - JWT_SECRET=its_a_secret
+        - EMAIL_SECRET = "tlm8Q~9_gkps6wXDfWiCp09IwaH6570jI9tl-bWb"
+        - EMAIL_CLIENT = "f151537a-4364-4136-b56b-f287c05ce900"
+        - EMAIL_TENANTID = "b8105612-1a8d-4c4f-830d-6f936290b4c3"
+        - NODE_ENV="production"
+- The backend is already hosted on a third-party website. So you only need to run the frontend
+    - "cd client"
+    - "npm run dev"
+
+###### App folder structure
 The-stadium
 - Client
     - src
@@ -105,6 +122,13 @@ The-stadium
             - review.route.js
         - server.js
         - .env
+            - DATABASE_URL = "postgres://neondb_owner:9oLTgAKvN7qR@ep-shrill-cherry-a59nyx3q-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require&connect_timeout=15"
+            - PORT=3000
+            - JWT_SECRET=its_a_secret
+            - EMAIL_SECRET = "tlm8Q~9_gkps6wXDfWiCp09IwaH6570jI9tl-bWb"
+            - EMAIL_CLIENT = "f151537a-4364-4136-b56b-f287c05ce900"
+            - EMAIL_TENANTID = "b8105612-1a8d-4c4f-830d-6f936290b4c3"
+            - NODE_ENV="production"
         - package.json
     - .gitignore
     - README.md
