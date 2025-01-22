@@ -42,8 +42,8 @@ This application will be built using PERN stack
     "cd server" --> "touch .env"
         - DATABASE_URL = "postgres://neondb_owner:9oLTgAKvN7qR@ep-shrill-cherry-a59nyx3q-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require&connect_timeout=15"
         - PORT=3000
-        - JWT_SECRET=its_a_secret
-        - EMAIL_SECRET = "tlm8Q~9_gkps6wXDfWiCp09IwaH6570jI9tl-bWb"
+        - JWT_S***** = "whatever" [the S***** is GitHub protected. please look in our /server/middleware/middleware.util.js file to see what to type here]
+        - EMAIL_S***** = "tlm8Q~9_gkps6wXDfWiCp09IwaH6570jI9tl-bWb" [same thing S***** is the same word]
         - EMAIL_CLIENT = "f151537a-4364-4136-b56b-f287c05ce900"
         - EMAIL_TENANTID = "b8105612-1a8d-4c4f-830d-6f936290b4c3"
         - NODE_ENV="production"
@@ -124,8 +124,8 @@ The-stadium
         - .env
             - DATABASE_URL = "postgres://neondb_owner:9oLTgAKvN7qR@ep-shrill-cherry-a59nyx3q-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require&connect_timeout=15"
             - PORT=3000
-            - JWT_SECRET=its_a_secret
-            - EMAIL_SECRET = "tlm8Q~9_gkps6wXDfWiCp09IwaH6570jI9tl-bWb"
+            - JWT_S***** = "whatever" [the S***** is GitHub protected. please look in our /server/middleware/middleware.util.js file to see what to type here]
+            - EMAIL_S***** = "tlm8Q~9_gkps6wXDfWiCp09IwaH6570jI9tl-bWb" [same thing S***** is the same word]
             - EMAIL_CLIENT = "f151537a-4364-4136-b56b-f287c05ce900"
             - EMAIL_TENANTID = "b8105612-1a8d-4c4f-830d-6f936290b4c3"
             - NODE_ENV="production"
