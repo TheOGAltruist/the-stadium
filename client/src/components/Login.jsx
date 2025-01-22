@@ -41,6 +41,8 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return; 
+
     dispatch(loginStart());
 
     // Regex to check if input is an email, if false it is treated as a username

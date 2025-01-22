@@ -11,6 +11,12 @@ const UserAccount = () => {
       <Typography variant="h4" textAlign="center" gutterBottom>
         Account
       </Typography>
+      {/* Andrew- Added some logic to display register or login */}
+      <Typography variant="body2" textAlign="center" gutterBottom>
+        {showLogin
+          ? "Don't have an account? Click Register to sign up!"
+          : "Already have an account? Click Login to sign in."}
+      </Typography>
       <Box sx={{ textAlign: "center", marginBottom: "20px" }}>
         <Button
           variant={"contained"}
