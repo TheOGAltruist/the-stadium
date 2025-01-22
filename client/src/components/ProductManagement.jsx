@@ -667,9 +667,9 @@ console.log(products);
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
+              <TableCell>Description</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>Quantity</TableCell>
-              <TableCell>Sku ID</TableCell>
               <TableCell>Tags</TableCell>
               <TableCell>Categories</TableCell>
             </TableRow>
@@ -691,9 +691,9 @@ console.log(products);
               filteredProducts.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>{product.name}</TableCell>
+                  <TableCell>{product.description}</TableCell>
                   <TableCell>${product.price}</TableCell>
                   <TableCell>{product.quantity}</TableCell>
-                  <TableCell>{product.skuId}</TableCell>
                   <TableCell>
                     {product.tags.map((tag, index) => (
                       <span
