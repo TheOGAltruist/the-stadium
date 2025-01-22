@@ -12,7 +12,6 @@ import Logo from "../assets/Stadium.png"; // Import the logo
 import { logout } from "../redux/auth/authSlice";
 
 const Navbar = () => {
-  // Initialize useHistory for navigation
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Grid,
@@ -25,58 +25,18 @@ import {
   useGetAllProductsQuery,
   useGetProductByIdQuery,
 } from "../redux/products/productsApi";
-import { useAddCartItemMutation } from "../redux/user/userApi";
-
-// Mock product data
-// const mockProducts = [
-//   {
-//     id: "1",
-//     name: "Basketball",
-//     description:
-//       "A high-quality basketball suitable for indoor and outdoor play.",
-//     price: 29.99,
-//     quantity: 50,
-//     skuId: "BB123",
-//     image: "https://via.placeholder.com/150",
-//     tags: ["sports", "indoor", "outdoor"],
-//     categories: ["Equipment", "Basketball"],
-//   },
-//   {
-//     id: "2",
-//     name: "Soccer Ball",
-//     description: "Durable soccer ball designed for all weather conditions.",
-//     price: 19.99,
-//     quantity: 100,
-//     skuId: "SB456",
-//     image: "https://via.placeholder.com/150",
-//     tags: ["sports", "outdoor"],
-//     categories: ["Equipment", "Soccer"],
-//   },
-//   {
-//     id: "3",
-//     name: "Running Shoes",
-//     description: "Comfortable running shoes with excellent grip and support.",
-//     price: 59.99,
-//     quantity: 30,
-//     skuId: "RS789",
-//     image: "https://via.placeholder.com/150",
-//     tags: ["footwear", "running"],
-//     categories: ["Shoes", "Running"],
-//   },
-//   {
-//     id: "4",
-//     name: "Tennis Racket",
-//     description: "Lightweight tennis racket for players of all skill levels.",
-//     price: 79.99,
-//     quantity: 20,
-//     skuId: "TR101",
-//     image: "https://via.placeholder.com/150",
-//     tags: ["sports", "tennis"],
-//     categories: ["Equipment", "Tennis"],
-//   },
-// ];
+import { useAddCartItemMutation } from "../redux/cart/cartApi";
+import {
+  addItemToGuestCart,
+  updateGuestCartItem,
+} from "../redux/cart/cartSlice";
 
 const Home = () => {
+  const dispatch = useDispatch(); // to access actions from RTK cartSlice
+  // check if user is logged in by accessing authSlice from redux
+  const user = useSelector((state) => state.auth.user);
+  const guestCart = useSelector((state) => state.cart.guestCart);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({ tag: "", category: "" });
   const [sortBy, setSortBy] = useState("low"); // Default sort: low to high price
@@ -126,14 +86,49 @@ const Home = () => {
   };
 
   // Show snackbar
-  const handleAddToCart = async (productId, productName) => {
-    try {
-      await addCartItem({ productId, quantity: 1 });
-      setSnackbarMessage(`Added to Cart: ${productName}`);
+  const handleAddToCart = async (
+    productId,
+    productName,
+    productImage,
+    productPrice
+  ) => {
+    // If logged in, use RTK query to add item to user cart
+    if (user) {
+      try {
+        await addCartItem({ productId, quantity: 1 });
+        setSnackbarMessage(`Added to Cart: ${productName}`);
+        setSnackbarOpen(true);
+      } catch (error) {
+        console.error("Failed to add to cart", error);
+        setSnackbarMessage("Failed to add to cart");
+      }
+    } else {
+      // User is not logged in, add item to guest cart
+      // check if item already exists in the cart
+      const existingItem = guestCart.find((item) => item.id === productId);
+      if (existingItem) {
+        // Update quantity if item already exists in guest cart
+        dispatch(
+          updateGuestCartItem({
+            id: productId,
+            quantity: existingItem.quantity + 1,
+          })
+        );
+      } else {
+        // Add new item to guest cart
+        dispatch(
+          addItemToGuestCart({
+            id: productId,
+            name: productName,
+            image: productImage,
+            price: productPrice,
+            quantity: 1,
+          })
+        );
+        // console.log("Guest Cart after adding item:", guestCart);
+      }
+      setSnackbarMessage(`Added to Guest Cart: ${productName}`);
       setSnackbarOpen(true);
-    } catch (error) {
-      console.error("Failed to add to cart", error);
-      setSnackbarMessage("Failed to add to cart");
     }
   };
   // Tyler's code
@@ -336,7 +331,14 @@ const Home = () => {
                       size="small"
                       variant="contained"
                       color="secondary"
-                      onClick={() => handleAddToCart(product.id, product.name)} //added product.id
+                      onClick={() =>
+                        handleAddToCart(
+                          product.id,
+                          product.name,
+                          product.image,
+                          product.price
+                        )
+                      } //added product.id, name, and image
                     >
                       Add to Cart
                     </Button>

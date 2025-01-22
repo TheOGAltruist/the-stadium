@@ -12,52 +12,14 @@ import {
   useGetAllUsersQuery,
   useModifySpecificUserMutation,
 } from "../redux/admin/adminApi";
+import { useNavigate } from "react-router-dom";
 
 const AllUsers = () => {
   // const [users, setUsers] = useState([]);
   // const [loading, setLoading] = useState(true);
-  const { data: users, isLoading, error } = useGetAllUsersQuery();
+  const { data: users, isLoading, error, refetch } = useGetAllUsersQuery();
   const [modifyUser] = useModifySpecificUserMutation();
-
-  // // Mock user data for development
-  // useEffect(() => {
-  //   const mockUsers = [
-  //     {
-  //       id: "1",
-  //       firstname: "John",
-  //       lastname: "Doe",
-  //       username: "johndoe",
-  //       email: "john@example.com",
-  //       isAdmin: false,
-  //       address: {
-  //         street1: "123 Elm St",
-  //         street2: "Apt 4B",
-  //         city: "Springfield",
-  //         state: "IL",
-  //         country: "USA",
-  //         zipcode: 62704,
-  //       },
-  //     },
-  //     {
-  //       id: "2",
-  //       firstname: "Jane",
-  //       lastname: "Smith",
-  //       username: "janesmith",
-  //       email: "jane@example.com",
-  //       isAdmin: true,
-  //       address: {
-  //         street1: "456 Oak St",
-  //         city: "Shelbyville",
-  //         state: "IL",
-  //         country: "USA",
-  //         zipcode: 62565,
-  //       },
-  //     },
-  //   ];
-
-  //   setUsers(mockUsers);
-  //   setLoading(false);
-  // }, []);
+  const navigate = useNavigate();
 
   const handleToggleAdmin = async (id) => {
     const user = users.find((user) => user.id === id);
@@ -68,6 +30,7 @@ const AllUsers = () => {
         // Call modifyUser mutation
         await modifyUser({ userId: id, isAdmin: !user.isAdmin }).unwrap();
         alert(`User ${action}d successfully.`);
+        refetch(); //Refresh the users page to trigger a re-render
       } catch (error) {
         console.error("Failed to update user", error);
         alert("Failed to update user");
@@ -96,6 +59,16 @@ const AllUsers = () => {
       <Typography variant="h4" gutterBottom>
         All Users
       </Typography>
+
+      {/* Andrew- added button to go back to dashboard */}
+      <Button
+        variant="contained"
+        color="secondary"
+        sx={{ mr: 2 }}
+        onClick={() => navigate("/admin")}
+      >
+        Back to Dashboard
+      </Button>
 
       {isLoading ? (
         <CircularProgress />
