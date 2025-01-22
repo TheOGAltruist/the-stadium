@@ -168,8 +168,8 @@ model OrderItem {
   id String @id @default(uuid(4))
   order Order @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: Cascade)
   order_id String
-  product Product? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  product_id String?
+  product Product @relation(fields: [product_id], references: [id], onDelete: SetDefault, onUpdate: NoAction)
+  product_id String @default("xx-Deleted-xx")
   quantity Int
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
